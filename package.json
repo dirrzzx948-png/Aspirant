@@ -1,10 +1,10 @@
 
 {
   "name": "aspirant",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Aspirant - Web Utility Toolkit",
-  "type": "module",
+  "type": "commonjs",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
