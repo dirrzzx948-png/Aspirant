@@ -427,8 +427,9 @@ footer{padding:29px 0 0;text-align:center;font-size:11px;color:#6d8d7a}
    <div class="dl-terminal-head"><i></i><i></i><i></i><span>ASPIRANT://DOWNLOADER</span><span style="margin-left:auto" id="dlTerminalStatus">READY</span></div>
    <div class="dl-terminal-body" id="downloadLog" role="log" aria-live="polite">
     <div class="dl-line dim">Aspirant Download Engine v1.1</div>
+    <div class="dl-line dim">kernel: media detector online · photo/video ready</div>
     <div class="dl-line dim">Select a source to begin.</div>
-    <div class="dl-line"><span class="prefix">aspirant@dl</span>:~$ <span class="dl-cursor"></span></div>
+    <div class="dl-line dl-prompt-line"><span class="prefix">aspirant@dl</span>:~$ <span class="dl-cursor"></span></div>
    </div>
   </div>
   <div>
@@ -705,25 +706,84 @@ function downloadBlob(content,name,type){
 function safeFilename(value){
  return String(value||"download").split(/[?#]/)[0].split(/[\\/]/).pop().replace(/[^\w.-]+/g,"_").slice(0,120)||"download";
 }
-const dlState={platform:"direct",running:false,controller:null};
+const dlState={platform:"direct",running:false,controller:null,typing:false};
 const dlNotes={
  direct:"Direct URL downloads accessible files through the Aspirant backend.",
  tiktok:"Paste a public TikTok video URL. Results come from the configured /api/extract endpoint.",
  instagram:"Paste a public Instagram post, Reel, or video URL. Results come from /api/extract.",
  whatsapp:"WhatsApp opens the official service. It cannot retrieve private chat media."
 };
+
+function dlStamp(){
+ const d=new Date();
+ return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")+":"+String(d.getSeconds()).padStart(2,"0");
+}
+function dlEnsureCursor(){
+ const log=$("downloadLog");
+ let cursor=log.querySelector(".dl-prompt-line");
+ if(!cursor){
+  cursor=document.createElement("div");
+  cursor.className="dl-line dl-prompt-line";
+  cursor.innerHTML='<span class="prefix">aspirant@dl</span>:~$ <span class="dl-cursor"></span>';
+ }
+ log.appendChild(cursor);
+ log.scrollTop=log.scrollHeight;
+ return cursor;
+}
 function dlLog(message,type="line"){
+ const log=$("downloadLog");
+ const cursor=log.querySelector(".dl-prompt-line");
  const line=document.createElement("div");
  line.className="dl-line "+type;
- line.textContent=message;
- const log=$("downloadLog");
- log.appendChild(line);
- log.scrollTop=log.scrollHeight;
+ if(type==="dim"){
+  line.textContent=message;
+ }else{
+  line.innerHTML='<span class="prefix">['+dlStamp()+']</span> '+escapeHTML(message);
+ }
+ if(cursor)log.insertBefore(line,cursor);
+ else log.appendChild(line);
+ dlEnsureCursor();
+}
+function dlType(message,type="line"){
+ return new Promise(resolve=>{
+  if(dlState.typing){dlLog(message,type);resolve();return}
+  const log=$("downloadLog");
+  const cursor=log.querySelector(".dl-prompt-line");
+  const line=document.createElement("div");
+  line.className="dl-line "+type;
+  const prefix=document.createElement("span");
+  prefix.className="prefix";
+  prefix.textContent="["+dlStamp()+"] ";
+  const text=document.createElement("span");
+  line.append(prefix,text);
+  if(cursor)log.insertBefore(line,cursor);
+  else log.appendChild(line);
+  let i=0;
+  dlState.typing=true;
+  const tick=()=>{
+   if(i<=message.length){
+    text.textContent=message.slice(0,i);
+    i++;
+    log.scrollTop=log.scrollHeight;
+    setTimeout(tick,8+Math.random()*14);
+   }else{
+    dlState.typing=false;
+    dlEnsureCursor();
+    resolve();
+   }
+  };
+  tick();
+ });
 }
 function dlClear(){
  $("downloadLog").replaceChildren();
- dlLog("Aspirant Download Engine v1.1","dim");
- dlLog("Ready for a new task.","dim");
+ ["Aspirant Download Engine v1.1","kernel: media detector online · photo/video ready","Session cleared · waiting for input"].forEach(m=>{
+  const line=document.createElement("div");
+  line.className="dl-line dim";
+  line.textContent=m;
+  $("downloadLog").appendChild(line);
+ });
+ dlEnsureCursor();
 }
 function dlProgress(percent,label){
  const value=Math.max(0,Math.min(100,percent));
@@ -752,7 +812,11 @@ function dlSetBusy(busy){
  $("downloadButton").disabled=busy;
  $("previewButton").disabled=busy;
  $("dlResetButton").disabled=busy;
- $("downloadButton").textContent=busy?"Working...":"Start download";
+ const platform=dlState.platform;
+ if(busy)$("downloadButton").textContent="Working...";
+ else if(platform==="direct")$("downloadButton").textContent="Start download";
+ else if(platform==="whatsapp")$("downloadButton").textContent="Open WhatsApp";
+ else $("downloadButton").textContent="Extract media";
 }
 function openWhatsAppURL(value){
  let url;
@@ -760,24 +824,20 @@ function openWhatsAppURL(value){
  if(url.protocol!=="https:"||!/(^|\.)wa\.me$|(^|\.)whatsapp\.com$/i.test(url.hostname))throw new Error("Use an official WhatsApp URL.");
  window.open(url.href,"_blank","noopener,noreferrer");
 }
-function isLikelyVideo(item){
- if(!item)return false;
- const fmt=String(item.format||item.mime||item.quality||"").toLowerCase();
- const url=String(item.url||"").toLowerCase();
- if(/video|mp4|webm|mov|m4v|ogg/.test(fmt))return true;
- if(/\.(mp4|webm|mov|m4v|ogg)(?:$|\?)/i.test(url))return true;
- if(/video/.test(String(item.mime||"").toLowerCase()))return true;
- return false;
+
+/* Deteksi foto vs video — urutan penting: cek ekstensi dulu */
+function mediaKind(item){
+ if(!item)return "unknown";
+ const url=String(item.url||"").toLowerCase().split("?")[0];
+ const meta=[item.format,item.mime,item.quality,item.type,item.filename,item.extension].map(v=>String(v||"").toLowerCase()).join(" ");
+ if(/\.(jpe?g|png|webp|gif|heic|bmp|avif)$/i.test(url)||/\b(image\/|jpg|jpeg|png|webp|gif|heic|photo|picture)\b/.test(meta))return "image";
+ if(/\.(mp4|webm|mov|m4v|ogg|mkv|m3u8)$/i.test(url)||/\b(video\/|video|mp4|webm|mov|m4v|m3u8)\b/.test(meta))return "video";
+ // fallback: TikTok/IG sering tanpa ekstensi — quality/type
+ if(/\b(hd|sd|no_watermark|watermark|720|1080|480|360)\b/.test(meta)&&!/\b(image|photo|jpg|png)\b/.test(meta))return "video";
+ return "unknown";
 }
-function isLikelyImage(item){
- if(!item)return false;
- const fmt=String(item.format||item.mime||item.quality||"").toLowerCase();
- const url=String(item.url||"").toLowerCase();
- if(/image|jpg|jpeg|png|webp|gif|heic/.test(fmt))return true;
- if(/\.(jpe?g|png|webp|gif|heic|bmp)(?:$|\?)/i.test(url))return true;
- if(/image\//.test(String(item.mime||"").toLowerCase()))return true;
- return false;
-}
+function isLikelyVideo(item){return mediaKind(item)==="video"}
+function isLikelyImage(item){return mediaKind(item)==="image"}
 function normaliseExtraction(raw){
  if(!raw||typeof raw!=="object")throw new Error("The extractor returned an invalid response.");
  const nested=raw.data&&typeof raw.data==="object"&&!Array.isArray(raw.data)?raw.data:{};
@@ -821,131 +881,117 @@ function normaliseExtraction(raw){
 async function extractPlatform(platform){
  const url=getDownloadURL();
  if(platform!=="tiktok"&&platform!=="instagram")throw new Error("Unsupported extractor.");
- dlLog("[INIT] Starting "+platform.toUpperCase()+" extraction.");
+ await dlType("[INIT] "+platform.toUpperCase()+" extractor boot");
  dlLog("[URL] "+url.href,"dim");
- dlProgress(10,"Connecting to extractor");
+ dlProgress(12,"Connecting to extractor");
  dlStatus("EXTRACTING");
  const raw=await request("/api/extract",{
   method:"POST",
   headers:{"Content-Type":"application/json"},
   body:JSON.stringify({url:url.href,platform})
  });
+ dlProgress(55,"Parsing media payload");
  const data=normaliseExtraction(raw);
  if(!data.downloads.length){
   throw new Error("Extractor response contains no usable download links. Check the server extractor response format.");
  }
- dlLog("[OK] Extractor returned "+data.downloads.length+" option(s).");
+ const photos=data.downloads.filter(isLikelyImage).length;
+ const videos=data.downloads.filter(isLikelyVideo).length;
+ const unknown=data.downloads.length-photos-videos;
+ await dlType("[DETECT] "+photos+" foto · "+videos+" video"+(unknown?" · "+unknown+" other":""));
+ dlLog("[OK] "+data.downloads.length+" download option(s) ready.");
  dlProgress(100,"Extraction complete");
  dlStatus("EXTRACTED");
  renderExtractionResults(data,platform);
  return data;
 }
 
-/* Build media gallery: autoplay video, swipeable photos with prev/next */
+/* Gallery: video autoplay, foto bisa digeser (‹ › + swipe) */
 function buildMediaGallery(items){
  const gallery=document.createElement("div");
  gallery.className="media-gallery";
  const viewport=document.createElement("div");
  viewport.className="media-gallery-viewport";
 
+ // unik per URL agar quality variant tidak jadi slide berulang
+ const seen=new Set();
+ const unique=[];
+ items.forEach(item=>{
+  const key=String(item.url||"").split("?")[0];
+  if(!key||seen.has(key))return;
+  seen.add(key);
+  unique.push(item);
+ });
+ if(!unique.length)return gallery;
+
  const slides=[];
- items.forEach((item,index)=>{
+ unique.forEach((item,index)=>{
   const slide=document.createElement("div");
   slide.className="media-gallery-slide"+(index===0?" active":"");
-  const isVideo=isLikelyVideo(item);
-  const isImage=isLikelyImage(item)||!isVideo;
+  const kind=mediaKind(item);
 
-  if(isVideo){
+  if(kind==="video"){
    const video=document.createElement("video");
    video.src=item.url;
    video.controls=true;
-   video.autoplay=true;
    video.muted=true;
+   video.autoplay=true;
    video.playsInline=true;
-   video.loop=false;
    video.setAttribute("playsinline","");
    video.setAttribute("muted","");
+   video.preload="metadata";
    video.onerror=()=>{
-    const fallback=document.createElement("p");
-    fallback.className="muted";
-    fallback.style.padding="20px";
-    fallback.textContent="Video tidak bisa diputar di browser ini.";
-    slide.replaceChildren(fallback);
+    slide.innerHTML='<p class="muted" style="padding:24px;text-align:center">Video tidak bisa dipreview di browser (CORS). Pakai tombol Download di bawah.</p>';
    };
-   // Try play after insert
-   video.addEventListener("loadeddata",()=>{
-    video.play().catch(()=>{});
-   });
+   const tryPlay=()=>{video.muted=true;video.play().catch(()=>{});};
+   video.addEventListener("canplay",tryPlay,{once:true});
+   video.addEventListener("loadeddata",tryPlay,{once:true});
    slide.appendChild(video);
   }else{
    const img=document.createElement("img");
    img.src=item.url;
-   img.alt=item.quality||`Foto ${index+1}`;
+   img.alt=`Foto ${index+1}`;
    img.loading=index===0?"eager":"lazy";
+   img.referrerPolicy="no-referrer";
    img.onerror=()=>{
-    const fallback=document.createElement("p");
-    fallback.className="muted";
-    fallback.style.padding="20px";
-    fallback.textContent="Gambar tidak bisa dimuat.";
-    slide.replaceChildren(fallback);
+    slide.innerHTML='<p class="muted" style="padding:24px;text-align:center">Gambar tidak bisa dimuat. Pakai tombol Download.</p>';
    };
    slide.appendChild(img);
   }
   viewport.appendChild(slide);
   slides.push(slide);
  });
-
  gallery.appendChild(viewport);
 
- let current=0;
+ let current=0,counter=null,dots=null,prevBtn=null,nextBtn=null;
  function goTo(index){
   if(index<0||index>=slides.length)return;
-  // Pause any playing videos in other slides
   slides.forEach((s,i)=>{
    const v=s.querySelector("video");
-   if(v){
-    if(i===index){
-     v.muted=true;
-     v.play().catch(()=>{});
-    }else{
-     v.pause();
-    }
-   }
+   if(v){if(i===index){v.muted=true;v.play().catch(()=>{});}else v.pause()}
    s.classList.toggle("active",i===index);
   });
   current=index;
-  if(counter)counter.textContent=`${current+1} / ${slides.length}`;
-  if(dots){
-   dots.querySelectorAll(".media-gallery-dot").forEach((d,i)=>d.classList.toggle("active",i===index));
-  }
+  if(counter)counter.textContent=(current+1)+" / "+slides.length;
+  if(dots)dots.querySelectorAll(".media-gallery-dot").forEach((d,i)=>d.classList.toggle("active",i===index));
   if(prevBtn)prevBtn.disabled=current===0;
   if(nextBtn)nextBtn.disabled=current===slides.length-1;
  }
 
- let counter=null,dots=null,prevBtn=null,nextBtn=null;
-
  if(slides.length>1){
   const nav=document.createElement("div");
   nav.className="media-gallery-nav";
-
   prevBtn=document.createElement("button");
-  prevBtn.type="button";
-  prevBtn.className="button";
-  prevBtn.textContent="‹";
+  prevBtn.type="button";prevBtn.className="button";prevBtn.textContent="‹";
   prevBtn.setAttribute("aria-label","Sebelumnya");
   prevBtn.addEventListener("click",()=>goTo(current-1));
-
   counter=document.createElement("span");
   counter.className="media-gallery-counter";
-  counter.textContent=`1 / ${slides.length}`;
-
+  counter.textContent="1 / "+slides.length;
   nextBtn=document.createElement("button");
-  nextBtn.type="button";
-  nextBtn.className="button";
-  nextBtn.textContent="›";
+  nextBtn.type="button";nextBtn.className="button";nextBtn.textContent="›";
   nextBtn.setAttribute("aria-label","Berikutnya");
   nextBtn.addEventListener("click",()=>goTo(current+1));
-
   nav.append(prevBtn,counter,nextBtn);
   gallery.appendChild(nav);
 
@@ -955,28 +1001,20 @@ function buildMediaGallery(items){
    const dot=document.createElement("button");
    dot.type="button";
    dot.className="media-gallery-dot"+(i===0?" active":"");
-   dot.setAttribute("aria-label",`Slide ${i+1}`);
+   dot.setAttribute("aria-label","Slide "+(i+1));
    dot.addEventListener("click",()=>goTo(i));
    dots.appendChild(dot);
   });
   gallery.appendChild(dots);
-
   prevBtn.disabled=true;
 
-  // Touch swipe support
   let touchStartX=0;
-  viewport.addEventListener("touchstart",e=>{
-   touchStartX=e.changedTouches[0].screenX;
-  },{passive:true});
+  viewport.addEventListener("touchstart",e=>{touchStartX=e.changedTouches[0].screenX},{passive:true});
   viewport.addEventListener("touchend",e=>{
    const dx=e.changedTouches[0].screenX-touchStartX;
-   if(Math.abs(dx)>40){
-    if(dx<0)goTo(current+1);
-    else goTo(current-1);
-   }
+   if(Math.abs(dx)>40){if(dx<0)goTo(current+1);else goTo(current-1)}
   },{passive:true});
  }
-
  return gallery;
 }
 
@@ -984,6 +1022,7 @@ function renderExtractionResults(data,platform){
  const root=$("previewResult");
  root.replaceChildren();
  root.classList.remove("hidden");
+
  const heading=document.createElement("div");
  heading.className="card-head";
  const title=document.createElement("h2");
@@ -993,6 +1032,7 @@ function renderExtractionResults(data,platform){
  badge.textContent=platform.toUpperCase();
  heading.append(title,badge);
  root.appendChild(heading);
+
  if(data.description){
   const desc=document.createElement("p");
   desc.style.marginBottom="10px";
@@ -1004,49 +1044,55 @@ function renderExtractionResults(data,platform){
  meta.textContent=[data.author?"By "+data.author:"",data.duration?"Duration: "+data.duration:""].filter(Boolean).join(" · ")||"Available media links";
  root.appendChild(meta);
 
- // Prefer actual media URLs for gallery; fall back to thumbnail only if no media
- const galleryItems=data.downloads.length?data.downloads:(data.thumbnail?[{url:data.thumbnail,quality:"Thumbnail"}]:[]);
- if(galleryItems.length){
-  const gallery=buildMediaGallery(galleryItems);
-  root.appendChild(gallery);
+ // Gallery: foto digeser, video autoplay. Thumbnail sebagai fallback.
+ const gallerySource=data.downloads.length?data.downloads:(data.thumbnail?[{url:data.thumbnail,quality:"Thumbnail",format:"jpg"}]:[]);
+ if(gallerySource.length){
+  root.appendChild(buildMediaGallery(gallerySource));
  }
 
+ // Tombol download: Foto 1, Foto 2, ... / Video
  const list=document.createElement("div");
  list.className="extract-downloads";
+ let photoIndex=0,videoIndex=0;
+ const totalVideo=data.downloads.filter(isLikelyVideo).length;
+ const totalPhoto=data.downloads.filter(isLikelyImage).length;
 
- // Count photos vs videos for labeling
- let photoIndex=0;
- let videoIndex=0;
  data.downloads.forEach((item,index)=>{
+  const kind=mediaKind(item);
   const card=document.createElement("div");
   card.className="extract-download";
   const info=document.createElement("div");
   const name=document.createElement("strong");
-
-  const isVideo=isLikelyVideo(item);
-  const isImage=isLikelyImage(item);
-
-  let label;
-  if(isImage&&!isVideo){
+  let label,btnText="Download";
+  if(kind==="image"){
    photoIndex++;
-   label=`Foto ${photoIndex}`;
-  }else if(isVideo){
+   label="Foto "+photoIndex;
+   btnText="Download Foto "+photoIndex;
+  }else if(kind==="video"){
    videoIndex++;
-   label=videoIndex===1&&data.downloads.filter(isLikelyVideo).length===1?"Video":`Video ${videoIndex}`;
+   label=totalVideo===1?"Video":"Video "+videoIndex;
+   btnText="Download "+label;
   }else{
-   label=item.quality||`Opsi ${index+1}`;
+   // unknown: jika mayoritas foto, anggap foto
+   if(totalPhoto>=totalVideo){
+    photoIndex++;
+    label="Foto "+photoIndex;
+    btnText="Download Foto "+photoIndex;
+   }else{
+    videoIndex++;
+    label=totalVideo+totalPhoto<=1?"Video":"Video "+videoIndex;
+    btnText="Download "+label;
+   }
   }
   name.textContent=label;
-
   const details=document.createElement("small");
-  details.textContent=[item.format,item.size?String(item.size):"",item.mime,item.quality&&item.quality!==label?item.quality:""].filter(Boolean).join(" · ")||"Media file";
+  details.textContent=[item.format,item.size?String(item.size):"",item.mime,item.quality&&item.quality!==label?item.quality:""].filter(Boolean).join(" · ")||(kind==="image"?"Foto":kind==="video"?"Video":"Media");
   info.append(name,details);
-
   const button=document.createElement("button");
   button.type="button";
   button.className="button primary small";
-  button.textContent="Download";
-  button.addEventListener("click",()=>downloadExtracted(item,platform,index));
+  button.textContent=btnText;
+  button.addEventListener("click",()=>downloadExtracted(item,platform,index,label));
   card.append(info,button);
   list.appendChild(card);
  });
@@ -1055,12 +1101,13 @@ function renderExtractionResults(data,platform){
  const source=document.createElement("div");
  source.className="field";
  source.style.marginTop="15px";
- const label=document.createElement("label");
- label.textContent="Source URL";
+ const lab=document.createElement("label");
+ lab.textContent="Source URL";
  const link=document.createElement("a");
  link.href=$("downloadUrl").value.trim();
- link.target="_blank";link.rel="noopener noreferrer";link.textContent=$("downloadUrl").value.trim();
- source.append(label,link);
+ link.target="_blank";link.rel="noopener noreferrer";
+ link.textContent=$("downloadUrl").value.trim();
+ source.append(lab,link);
  root.appendChild(source);
 }
 
@@ -1073,7 +1120,8 @@ async function downloadStream(url,filename){
  const safeName=safeFilename(filename||$("downloadName").value.trim()||new URL(url).pathname.split("/").pop()||"aspirant-download");
  try{
   const endpoint="/api/download?url="+encodeURIComponent(url)+"&name="+encodeURIComponent(safeName);
-  dlLog("[CONNECT] Requesting Aspirant download endpoint.");
+  await dlType("[CONNECT] pipe → /api/download");
+  dlLog("[FILE] "+safeName,"dim");
   const response=await fetch(endpoint,{method:"GET",signal:dlState.controller.signal});
   if(!response.ok){
    let message="HTTP "+response.status;
@@ -1086,8 +1134,9 @@ async function downloadStream(url,filename){
   const reader=response.body.getReader(),chunks=[];
   let received=0;
   const startTime=performance.now();
-  dlLog("[HTTP] "+response.status+" "+response.statusText);
-  dlLog("[STREAM] Receiving file bytes.");
+  dlLog("[HTTP] "+response.status+" "+(response.statusText||"OK"));
+  dlLog("[STREAM] receiving bytes...");
+  dlStatus("STREAMING");
   while(true){
    const {done,value}=await reader.read();
    if(done)break;
@@ -1107,8 +1156,8 @@ async function downloadStream(url,filename){
   anchor.href=blobUrl;anchor.download=safeName;document.body.appendChild(anchor);anchor.click();anchor.remove();
   setTimeout(()=>URL.revokeObjectURL(blobUrl),60000);
   dlProgress(100,"File handed to browser");
-  dlLog("[DONE] "+dlFormatBytes(received)+" received.");
-  dlLog("[NOTE] Check the browser Downloads list to confirm it was saved.","dim");
+  await dlType("[DONE] "+dlFormatBytes(received)+" → browser downloads");
+  dlLog("check Downloads panel to confirm save","dim");
   dlStatus("COMPLETE");
   toast("File ready in browser downloads");
  }catch(error){
@@ -1122,19 +1171,16 @@ async function downloadStream(url,filename){
   dlSetBusy(false);
  }
 }
-async function downloadExtracted(item,platform,index){
+async function downloadExtracted(item,platform,index,label){
  if(dlState.running)return;
- dlLog("[DOWNLOAD] Selected "+platform.toUpperCase()+" option "+(index+1)+".");
- const isVideo=isLikelyVideo(item);
- const isImage=isLikelyImage(item);
- let defaultName;
- if(isImage&&!isVideo){
-  defaultName=`${platform}-foto-${index+1}.${safeFilename(item.format||"jpg").replace(/^\./,"")}`;
- }else if(isVideo){
-  defaultName=`${platform}-video-${index+1}.${safeFilename(item.format||"mp4").replace(/^\./,"")}`;
- }else{
-  defaultName=`${platform}-download-${index+1}.${safeFilename(item.format||"bin").replace(/^\./,"")}`;
- }
+ const kind=mediaKind(item);
+ const tag=label||(kind==="image"?"Foto "+(index+1):kind==="video"?"Video":"Option "+(index+1));
+ await dlType("[DOWNLOAD] "+tag+" · "+platform.toUpperCase());
+ let ext="bin";
+ if(kind==="image")ext=safeFilename(item.format||"jpg").replace(/^\./,"")||"jpg";
+ else if(kind==="video")ext=safeFilename(item.format||"mp4").replace(/^\./,"")||"mp4";
+ const slug=tag.toLowerCase().replace(/\s+/g,"-");
+ const defaultName=`${platform}-${slug}.${ext}`;
  await downloadStream(item.url,item.filename||$("downloadName").value.trim()||defaultName);
 }
 document.querySelectorAll("[data-platform]").forEach(button=>button.addEventListener("click",()=>{
@@ -1155,7 +1201,7 @@ document.querySelectorAll("[data-platform]").forEach(button=>button.addEventList
  $("downloadUrl").placeholder=placeholders[dlState.platform];
  $("downloadButton").textContent=dlState.platform==="direct"?"Start download":dlState.platform==="whatsapp"?"Open WhatsApp":"Extract media";
  $("previewButton").textContent=dlState.platform==="direct"?"Preview URL":"Preview / Extract";
- dlLog("[SOURCE] Selected: "+dlState.platform.toUpperCase(),"dim");
+ dlLog("source → "+dlState.platform.toUpperCase(),"dim");
 }));
 $("dlResetButton").addEventListener("click",()=>{
  if(dlState.running)return;
@@ -1166,7 +1212,7 @@ async function previewCurrentSource(){
  try{
   if(dlState.platform==="whatsapp"){
    openWhatsAppURL($("downloadUrl").value.trim());
-   dlLog("[OPEN] WhatsApp link opened.");
+   await dlType("[OPEN] WhatsApp deep-link");
    dlStatus("OPENED");
    return;
   }
@@ -1189,19 +1235,25 @@ async function previewCurrentSource(){
   field.append(label,link);
   $("previewResult").appendChild(field);
 
-  const isImage=/\.(png|jpe?g|gif|webp|svg)(?:$|\?)/i.test(url.href);
-  const isVideo=/\.(mp4|webm|ogg|mov)(?:$|\?)/i.test(url.href);
+  const path=url.pathname.toLowerCase();
+  const isImage=/\.(png|jpe?g|gif|webp|svg|avif)$/i.test(path);
+  const isVideo=/\.(mp4|webm|ogg|mov|m4v)$/i.test(path);
 
   if(isImage||isVideo){
-   const gallery=buildMediaGallery([{url:url.href,quality:isVideo?"Video":"Foto",format:isVideo?"mp4":"jpg"}]);
-   $("previewResult").appendChild(gallery);
+   await dlType("[DETECT] "+(isVideo?"video":"foto")+" · building preview");
+   $("previewResult").appendChild(buildMediaGallery([{
+    url:url.href,
+    quality:isVideo?"Video":"Foto 1",
+    format:isVideo?"mp4":"jpg",
+    mime:isVideo?"video/mp4":"image/jpeg"
+   }]));
   }else{
    const info=document.createElement("p");
    info.textContent="Preview depends on browser support and the remote server.";
    $("previewResult").appendChild(info);
+   dlLog("[PREVIEW] generic URL — no media extension detected");
   }
-  dlLog("[VALID] URL format accepted.");
-  dlLog("[PREVIEW] Browser preview requested.","dim");
+  dlLog("[VALID] URL accepted");
   dlStatus("PREVIEW");
  }catch(error){
   dlLog("[ERROR] "+error.message,"error");
@@ -1240,7 +1292,7 @@ $("downloadButton").addEventListener("click",async()=>{
  catch(error){toast(error.message);dlLog("[ERROR] "+error.message,"error");dlStatus("ERROR");return}
  $("previewResult").classList.add("hidden");
  dlClear();
- dlLog("[INIT] Starting direct file download.");
+ await dlType("[INIT] direct download pipeline");
  dlLog("[URL] "+url.href,"dim");
  await downloadStream(url.href,$("downloadName").value.trim()||url.pathname.split("/").pop()||"download");
 });
