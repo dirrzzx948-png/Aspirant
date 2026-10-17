@@ -2,220 +2,441 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0a1016">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#091412">
+<meta name="color-scheme" content="dark">
 <title>Aspirant — Utility Workspace</title>
 <style>
 :root{
- color-scheme:dark;--bg:#0a1016;--panel:#111b24;--panel2:#172530;
- --line:#263b49;--text:#eaf5fc;--muted:#8da4b5;--accent:#75e8f2;
- --accent2:#8bafff;--danger:#ff8e9b;--green:#8bf0c2;--radius:17px
+  color-scheme:dark;
+  --bg:#091412;
+  --panel:#101e1a;
+  --panel2:#152822;
+  --panel3:#1b342b;
+  --line:#28483b;
+  --text:#e8fff4;
+  --muted:#8ba99a;
+  --accent:#75f0c0;
+  --accent2:#65d9ed;
+  --accentText:#08251b;
+  --danger:#ff858e;
+  --radius:18px;
+  --shadow:0 16px 48px #0002;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(ellipse at 75% -15%,#12323d 0,transparent 42%),var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+body{
+  margin:0;
+  min-height:100dvh;
+  background:
+    radial-gradient(ellipse at 8% 0%,#1a59402b,transparent 37%),
+    radial-gradient(ellipse at 95% 18%,#167e8b1c,transparent 32%),
+    var(--bg);
+  color:var(--text);
+  font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;
+}
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:2px solid var(--accent);outline-offset:3px
+}
 button:disabled{opacity:.45;cursor:not-allowed}
-.app{max-width:1500px;min-height:100dvh;margin:auto;display:grid;grid-template-columns:235px minmax(0,1fr)}
-.sidebar{padding:24px 14px;border-right:1px solid var(--line);background:#0d151d;display:flex;flex-direction:column;gap:25px}
+a{color:var(--accent)}
+svg{display:block;flex-shrink:0}
+.app{max-width:1500px;min-height:100dvh;margin:auto;display:grid;grid-template-columns:244px minmax(0,1fr)}
+.sidebar{
+  position:sticky;top:0;height:100dvh;padding:25px 15px;
+  border-right:1px solid #28483b99;
+  background:#0c1915dd;backdrop-filter:blur(10px);
+  display:flex;flex-direction:column;gap:29px;z-index:10
+}
 .brand{display:flex;align-items:center;gap:11px;padding:0 8px}
-.brand-mark{width:38px;height:38px;border-radius:13px;background:linear-gradient(140deg,var(--accent),#8baaff);color:#07151c;display:grid;place-items:center;font-weight:900;font-size:19px;box-shadow:0 0 25px #75e8f225;flex-shrink:0}
-.brand strong{font-size:17px;letter-spacing:.2px}.brand small{display:block;color:var(--muted);font-size:11px}
-.nav-label{font-size:10px;color:var(--muted);letter-spacing:1.5px;padding:0 10px;margin-bottom:8px}
-.nav{display:grid;gap:5px}
-.nav button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;color:#9fb1c0;background:transparent;border:1px solid transparent;border-radius:12px;padding:11px 12px;transition:.22s}
-.nav button:hover{background:#172731;color:var(--text);transform:translateX(2px)}
-.nav button.active{background:linear-gradient(100deg,#1c3945,#172630);border-color:#2a5862;color:var(--accent)}
-.nav .glyph{width:21px;text-align:center;font-size:17px}
+.brand-mark{
+  width:39px;height:39px;border-radius:14px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:var(--accentText);display:grid;place-items:center;
+  font-weight:900;font-size:19px;flex-shrink:0;
+  box-shadow:0 0 28px #75f0c027
+}
+.brand strong{font-size:17px;letter-spacing:.2px}
+.brand small{display:block;color:var(--muted);font-size:11px}
+.nav-label{font-size:10px;color:var(--muted);letter-spacing:1.8px;padding:0 10px;margin-bottom:9px}
+.nav{display:grid;gap:6px}
+.nav button{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  color:#9db8a9;background:transparent;border:1px solid transparent;
+  border-radius:13px;padding:12px;transition:background .2s,border-color .2s,color .2s,transform .2s
+}
+.nav button:hover{background:#193127;color:var(--text);transform:translateX(2px)}
+.nav button.active{
+  color:#dffff0;background:linear-gradient(110deg,#1d4535,#17352f);
+  border-color:#32644e;box-shadow:inset 3px 0 var(--accent)
+}
+.glyph{width:21px;height:21px;display:grid;place-items:center;color:var(--accent)}
 .sidebar-foot{margin-top:auto;border-top:1px solid var(--line);padding:16px 8px 0;color:var(--muted);font-size:12px}
-main{min-width:0;padding:27px clamp(15px,3vw,40px) 45px}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:30px}
-.mobile-brand{display:none;align-items:center;gap:9px;font-weight:750}
+main{min-width:0;padding:29px clamp(15px,3vw,42px) 44px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:34px}
+.mobile-brand{display:none;align-items:center;gap:9px;font-weight:800}
 .status{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px #8bf0c2;animation:pulse 2s infinite}
-.page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}
-h1{font-size:clamp(26px,3vw,35px);line-height:1.2;letter-spacing:-1px;margin:0 0 9px}
-h2{font-size:17px;margin:0 0 6px}h3{font-size:14px;margin:0 0 5px}
+.dot{width:8px;height:8px;border-radius:50%;background:#70edb2;box-shadow:0 0 12px #70edb277;animation:pulse 2s infinite}
+.page{animation:pageIn .35s ease both}
+.page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:25px}
+h1{font-size:clamp(27px,3.2vw,36px);line-height:1.18;letter-spacing:-1.2px;margin:0 0 10px;font-weight:800}
+h2{font-size:17px;letter-spacing:-.2px;margin:0 0 6px}
+h3{font-size:14px;margin:0 0 5px}
 p{margin:0;color:var(--muted)}
-.eyebrow{font-size:10px;color:var(--accent);letter-spacing:1.6px;text-transform:uppercase;margin-bottom:9px}
-.button{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:10px 14px;border-radius:11px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-weight:650;transition:transform .18s,border-color .18s,background .18s}
-.button:hover{border-color:#527f90;background:#203643;transform:translateY(-1px)}
-.button.primary{background:linear-gradient(110deg,var(--accent),#a2c5ff);border-color:transparent;color:#07171d}
-.button.primary:hover{filter:brightness(1.08)}
-.button.danger{color:var(--danger)}.button.small{padding:7px 10px;font-size:12px}
+.eyebrow{font-size:10px;color:var(--accent);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:10px}
+.button{
+  display:inline-flex;justify-content:center;align-items:center;gap:8px;
+  padding:10px 15px;border-radius:12px;border:1px solid var(--line);
+  background:linear-gradient(145deg,#193027,#14251f);color:var(--text);
+  font-weight:650;transition:transform .18s,border-color .18s,filter .18s,box-shadow .18s
+}
+.button:hover{border-color:#4d8069;filter:brightness(1.1);transform:translateY(-1px)}
+.button:active{transform:scale(.98)}
+.button.primary{
+  background:linear-gradient(110deg,var(--accent),#9cf5d5 58%,var(--accent2));
+  border-color:transparent;color:var(--accentText);
+  box-shadow:0 5px 20px #65d9ed13
+}
+.button.primary:hover{box-shadow:0 7px 25px #65d9ed25}
+.button.danger{color:var(--danger)}
+.button.small{padding:7px 10px;font-size:12px}
 .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:15px}
-.card{min-width:0;border:1px solid var(--line);background:linear-gradient(145deg,#14212b,#101922);border-radius:var(--radius);padding:19px;box-shadow:0 8px 30px #00000012;animation:rise .32s ease both}
+.card{
+  min-width:0;border:1px solid #29483b;background:linear-gradient(145deg,#12231d,#0f1c18);
+  border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);
+  transition:border-color .2s,transform .2s
+}
+.card:hover{border-color:#365e4c}
 .span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-6{grid-column:span 6}.span-4{grid-column:span 4}
-.stat-label{font-size:12px;color:var(--muted)}.stat-value{font-size:27px;letter-spacing:-.7px;font-weight:750;margin:9px 0 3px}.stat-note{font-size:11px;color:var(--muted)}
+.stat-label{font-size:12px;color:var(--muted)}
+.stat-value{font-size:29px;letter-spacing:-1px;font-weight:800;margin:9px 0 3px}
+.stat-note{font-size:11px;color:var(--muted)}
 .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-.field{display:grid;gap:7px;margin-bottom:14px}.field label{font-size:12px;color:#b9cbd7}
-input,textarea,select{width:100%;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:#0b141c;color:var(--text);transition:border-color .2s,box-shadow .2s}
-input:focus,textarea:focus,select:focus{border-color:#63bfcf;box-shadow:0 0 0 3px #75e8f212}
-textarea{min-height:125px;resize:vertical;font-family:ui-monospace,monospace;font-size:12px}
-input::placeholder,textarea::placeholder{color:#667f90}
-.row{display:flex;gap:9px;align-items:center}.row>*{min-width:0}.row .grow{flex:1}
+.field{display:grid;gap:7px;margin-bottom:14px}
+.field label{font-size:12px;color:#b7d2c3}
+input,textarea,select{
+  width:100%;min-width:0;padding:12px 13px;border:1px solid #2b4b3d;
+  border-radius:12px;background:#0b1712;color:var(--text);
+  transition:border-color .2s,box-shadow .2s
+}
+input:focus,textarea:focus,select:focus{border-color:#70dcb4;box-shadow:0 0 0 3px #75f0c015;outline:none}
+textarea{min-height:125px;resize:vertical;font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px}
+input::placeholder,textarea::placeholder{color:#637e70}
+.row{display:flex;gap:9px;align-items:center}
+.row>*{min-width:0}
+.row .grow{flex:1}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
-.result{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:13px;background:#0c151d;overflow:auto}
-.result pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.result a{color:var(--accent);overflow-wrap:anywhere}
+.result{
+  margin-top:16px;padding:15px;border:1px solid var(--line);
+  border-radius:14px;background:#0b1712;overflow:auto
+}
+.result pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}
+.result a{color:var(--accent);overflow-wrap:anywhere}
 .empty{padding:28px 12px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
-.hidden{display:none!important}.tag{display:inline-flex;align-items:center;border:1px solid var(--line);padding:4px 9px;border-radius:8px;color:var(--muted);font-size:11px}
-.muted{color:var(--muted)}.list{display:grid;gap:9px}
-.history-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:11px}
-.history-item .meta{min-width:0;overflow-wrap:anywhere}.history-item .meta strong{display:block;font-size:13px}.history-item .meta small{color:var(--muted)}
+.hidden{display:none!important}
+.tag{display:inline-flex;align-items:center;border:1px solid #355844;background:#172b22;padding:4px 9px;border-radius:9px;color:#a9d9c0;font-size:11px}
+.muted{color:var(--muted)}
+.list{display:grid;gap:9px}
+.history-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:12px;background:#112019}
+.history-item .meta{min-width:0;overflow-wrap:anywhere}
+.history-item .meta strong{display:block;font-size:13px}
+.history-item .meta small{color:var(--muted)}
 .tool-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
-.tool-tabs button{border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:transparent;color:var(--muted)}
-.tool-tabs button.active{background:#1c3945;color:var(--accent);border-color:#32616d}
-.terminal{background:#080d11;border:1px solid #293b45;border-radius:12px;overflow:hidden}
-.terminal-head{display:flex;gap:6px;align-items:center;padding:10px 12px;border-bottom:1px solid #26343b;color:#a8b0bb;font:11px ui-monospace,monospace}
-.terminal-head i{width:7px;height:7px;border-radius:50%;background:#6b7480}
-.terminal-body{padding:13px;font:12px/1.8 ui-monospace,monospace;overflow-wrap:anywhere;min-height:65px}
-.terminal-body .line{color:#a8e5c1}.terminal-body .dim{color:#828b97}
-footer{padding:28px 0 0;text-align:center;font-size:11px;color:#6f8798}
-.notice{padding:11px 12px;border:1px solid #4b4a38;background:#201f18;border-radius:10px;color:#ded2a1;font-size:12px;margin-bottom:14px}
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#e5fbff;color:#10232b;padding:11px 16px;border-radius:12px;box-shadow:0 8px 30px #0008;z-index:100;max-width:90vw;animation:rise .2s ease}
+.tool-tabs button{
+  border:1px solid var(--line);border-radius:10px;padding:9px 12px;
+  background:#101e18;color:var(--muted);transition:.2s
+}
+.tool-tabs button:hover{border-color:#4b8067;color:var(--text)}
+.tool-tabs button.active{background:#204232;border-color:#4a8b6c;color:#dffff0}
+.notice{padding:12px 14px;border:1px solid #655b38;background:#292819;border-radius:12px;color:#e3d49f;font-size:12px;margin-bottom:14px}
+footer{padding:29px 0 0;text-align:center;font-size:11px;color:#6d8d7a}
+#toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  background:#d8ffed;color:#10271d;padding:11px 17px;border-radius:13px;
+  box-shadow:0 8px 35px #0007;z-index:30;max-width:90vw;
+  animation:toastIn .22s ease both
+}
 .downloader-shell{display:grid;gap:16px}
 .dl-platforms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
-.dl-platform{border:1px solid var(--line);background:#0d171f;color:var(--muted);border-radius:12px;padding:13px 6px;text-align:center;min-width:0;transition:.2s}
-.dl-platform:hover{border-color:#507e8d;transform:translateY(-2px)}
-.dl-platform.active{border-color:var(--accent);background:#19323c;color:var(--accent);box-shadow:0 0 18px #75e8f210}
-.dl-platform svg{width:22px;height:22px;display:block;margin:0 auto 6px}
-.dl-platform strong{display:block;font-size:12px}
+.dl-platform{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  border:1px solid #2a4a3b;background:#0d1a15;color:#9ab6a6;
+  border-radius:14px;padding:16px 7px;min-width:0;
+  transition:transform .2s,border-color .2s,background .2s,color .2s,box-shadow .2s
+}
+.dl-platform:hover{transform:translateY(-3px);border-color:#4b8067;color:var(--text)}
+.dl-platform svg{width:25px;height:25px}
+.dl-platform strong{font-size:12px}
+.dl-platform.active{
+  border-color:#69dcb0;background:linear-gradient(145deg,#204a37,#14342d);
+  color:#e1fff1;box-shadow:0 0 25px #65d9ed0b
+}
 .dl-platform-note{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
-.dl-terminal{background:#080d10;border:1px solid #263b32;border-radius:13px;overflow:hidden}
-.dl-terminal-head{display:flex;align-items:center;gap:7px;padding:12px 14px;border-bottom:1px solid #26352d;font:11px ui-monospace,monospace;color:#9daea2}
+.dl-terminal{background:#07110d;border:1px solid #284638;border-radius:14px;overflow:hidden}
+.dl-terminal-head{
+  display:flex;align-items:center;gap:7px;padding:12px 14px;
+  border-bottom:1px solid #223b2d;font:11px ui-monospace,monospace;color:#9ab5a3
+}
 .dl-terminal-head i{height:8px;width:8px;border-radius:50%;background:#65756a}
-.dl-terminal-head i:first-child{background:#e27e7e}.dl-terminal-head i:nth-child(2){background:#d8bd73}.dl-terminal-head i:nth-child(3){background:#78c997}
-.dl-terminal-body{height:165px;overflow:auto;padding:13px;font:12px/1.8 ui-monospace,monospace;overflow-wrap:anywhere}
-.dl-line{white-space:pre-wrap;color:#a7e8b7}.dl-line.dim{color:#748578}.dl-line.warn{color:#e7ce8c}.dl-line.error{color:#ff8989}
+.dl-terminal-head i:first-child{background:#e27e7e}
+.dl-terminal-head i:nth-child(2){background:#d8bd73}
+.dl-terminal-head i:nth-child(3){background:#78c997}
+.dl-terminal-body{height:210px;overflow:auto;padding:14px;font:12px/1.8 ui-monospace,SFMono-Regular,monospace;overflow-wrap:anywhere}
+.dl-line{white-space:pre-wrap;color:#a7e8b7}
+.dl-line.dim{color:#718b79}
+.dl-line.warn{color:#e7ce8c}
+.dl-line.error{color:#ff8989}
 .dl-line .prefix{color:#68d98d}
-.dl-cursor{display:inline-block;width:7px;height:13px;background:#75e79b;vertical-align:middle;animation:blink 1s steps(2,start) infinite}
-.dl-progress-track{height:6px;background:#202922;border-radius:20px;overflow:hidden;margin-top:9px}
-.dl-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#69e2d6,#83f0a7);border-radius:20px;transition:width .15s}
+.dl-cursor{display:inline-block;width:7px;height:13px;background:#75e79b;vertical-align:middle;animation:dlblink 1s steps(2,start) infinite}
+.dl-progress-track{height:6px;background:#1c3024;border-radius:20px;overflow:hidden;margin-top:8px}
+.dl-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:20px;transition:width .18s linear;box-shadow:0 0 15px #75f0c055}
 .dl-progress-meta{display:flex;justify-content:space-between;gap:8px;font:11px ui-monospace,monospace;color:#a3b4a7;margin-top:8px}
-.dl-actions{display:flex;gap:8px;flex-wrap:wrap}.dl-actions>*{flex:1}
-#previewResult img,#previewResult video{display:block;max-width:100%;max-height:420px;margin:0 auto;object-fit:contain}
-#previewResult video{width:100%;background:#030608;border-radius:12px}
-.media-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:13px}
-.media-carousel{position:relative;border:1px solid var(--line);border-radius:14px;background:#060b10;overflow:hidden;touch-action:pan-y}
-.media-stage{height:clamp(230px,52vw,440px);display:flex;align-items:center;justify-content:center;overflow:hidden}
-.media-stage img{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
-.carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:38px;height:38px;border:1px solid #ffffff30;border-radius:50%;background:#07141bd9;color:white;font-size:22px;display:grid;place-items:center}
-.carousel-arrow:hover{background:#163746}
-.carousel-arrow.prev{left:10px}.carousel-arrow.next{right:10px}
-.carousel-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;background:#101b23;border-top:1px solid var(--line)}
-.carousel-footer span{font-size:12px;color:var(--muted)}
-.photo-selector{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:9px;margin-top:13px}
-.photo-option{min-width:0;border:1px solid var(--line);background:#101b23;border-radius:11px;padding:7px;text-align:left;color:var(--text);transition:.2s}
-.photo-option.active{border-color:var(--accent);background:#18333d;box-shadow:0 0 0 1px #75e8f225}
-.photo-option img{width:100%;height:75px;object-fit:contain;background:#060b10;border-radius:7px;display:block}
-.photo-option strong{display:block;font-size:11px;margin:7px 0 3px}
-.photo-option .button{width:100%;padding:7px 3px;font-size:11px;margin-top:3px}
-.media-results{display:grid;gap:15px}
-.media-card{border:1px solid var(--line);background:#101b23;border-radius:13px;padding:12px;min-width:0}
-.media-card video{width:100%;max-height:390px;background:#030608;border-radius:10px;display:block}
-.media-card img{width:100%;max-height:300px;object-fit:contain;background:#050a0e;border-radius:10px;display:block}
-.media-card-title{display:flex;align-items:center;justify-content:space-between;gap:9px;margin:0 0 10px}
-.media-card-title strong{font-size:13px}
-.media-card .actions{margin-top:10px}
-.media-summary{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
-@keyframes blink{to{visibility:hidden}}
-@keyframes pulse{50%{opacity:.5;box-shadow:0 0 4px #75e8f2}}
-@keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.dl-actions{display:flex;gap:8px;flex-wrap:wrap}
+.dl-actions>*{flex:1}
+#previewResult img,#previewResult video{display:block;max-width:100%;max-height:350px;margin:12px auto;object-fit:contain}
+.extract-card{display:grid;grid-template-columns:96px minmax(0,1fr);gap:13px;padding:13px;border:1px solid var(--line);border-radius:13px;margin-top:10px;background:#112019}
+.extract-thumb{width:96px;height:96px;object-fit:cover;background:#09120e;border-radius:10px}
+.extract-info{min-width:0}
+.extract-info p{font-size:12px;margin:5px 0 10px;overflow-wrap:anywhere}
+.extract-downloads{display:grid;gap:8px;margin-top:12px}
+.extract-download{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:11px;border:1px solid #29483a;background:#102019;border-radius:11px
+}
+.extract-download>div{min-width:0}
+.extract-download strong{display:block;font-size:12px}
+.extract-download small{display:block;color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+.extract-download .button{flex-shrink:0}
+.quick-card{height:100%;display:flex;align-items:center;gap:10px;text-align:left;width:100%}
+.quick-icon{width:35px;height:35px;border-radius:12px;background:#1e3a2c;color:var(--accent);display:grid;place-items:center}
+
+/* Media gallery for photos / videos */
+.media-gallery{
+  position:relative;
+  margin:14px auto;
+  max-width:100%;
+  border-radius:14px;
+  overflow:hidden;
+  background:#07110d;
+  border:1px solid #284638;
+}
+.media-gallery-viewport{
+  position:relative;
+  width:100%;
+  min-height:180px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#07110d;
+}
+.media-gallery-slide{
+  display:none;
+  width:100%;
+  text-align:center;
+}
+.media-gallery-slide.active{display:block}
+.media-gallery-slide img,
+.media-gallery-slide video{
+  display:block;
+  max-width:100%;
+  max-height:380px;
+  margin:0 auto;
+  object-fit:contain;
+  border-radius:0;
+}
+.media-gallery-nav{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:12px 10px;
+  border-top:1px solid #223b2d;
+  background:#0b1712;
+}
+.media-gallery-nav .button{
+  min-width:42px;
+  padding:8px 12px;
+  font-size:16px;
+  line-height:1;
+}
+.media-gallery-counter{
+  font:12px ui-monospace,monospace;
+  color:#a3b4a7;
+  min-width:70px;
+  text-align:center;
+}
+.media-gallery-dots{
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  padding:0 0 10px;
+  background:#0b1712;
+}
+.media-gallery-dot{
+  width:8px;height:8px;border-radius:50%;
+  border:0;padding:0;
+  background:#355844;
+  cursor:pointer;
+  transition:background .2s,transform .2s;
+}
+.media-gallery-dot.active{
+  background:var(--accent);
+  transform:scale(1.2);
+  box-shadow:0 0 10px #75f0c044;
+}
+.media-gallery-dot:hover{background:#4b8067}
+
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 #75f0c000}50%{box-shadow:0 0 0 5px #75f0c014}}
+@keyframes pageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes dlblink{to{visibility:hidden}}
 @media(max-width:760px){
- .app{display:block;padding-bottom:72px}
- .sidebar{position:fixed;z-index:10;bottom:0;left:0;right:0;height:auto;padding:7px 5px calc(7px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line);background:#0d151df5;backdrop-filter:blur(10px)}
- .brand,.nav-label,.sidebar-foot{display:none}.nav{grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
- .nav button{flex-direction:column;justify-content:center;gap:3px;padding:7px 1px;font-size:10px;border-radius:9px}
- .nav .glyph{font-size:17px;width:auto}main{padding:17px 13px 28px}
- .topbar{margin-bottom:23px}.mobile-brand{display:flex}
- .span-8,.span-6,.span-4{grid-column:span 12}.card{padding:15px}
- .page-heading{align-items:flex-start}.page-heading .button{padding:9px 10px}
- .stat-value{font-size:24px}
- .carousel-arrow{width:34px;height:34px}
- .photo-selector{grid-template-columns:repeat(auto-fill,minmax(85px,1fr))}
+ .app{display:block;padding-bottom:74px}
+ .sidebar{
+  position:fixed;z-index:10;bottom:0;top:auto;left:0;right:0;height:auto;
+  padding:7px 5px calc(7px + env(safe-area-inset-bottom));
+  border-right:0;border-top:1px solid #315140;background:#0c1915ed;
+  backdrop-filter:blur(10px)
+ }
+ .brand,.nav-label,.sidebar-foot{display:none}
+ .sidebar>div:has(.nav){width:100%}
+ .nav{grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
+ .nav button{flex-direction:column;justify-content:center;gap:4px;padding:8px 1px;font-size:10px;border-radius:10px}
+ .nav button.active{box-shadow:inset 0 2px var(--accent)}
+ .nav .glyph{font-size:17px;width:auto}
+ main{padding:17px 13px 28px}
+ .topbar{margin-bottom:24px}
+ .mobile-brand{display:flex}
+ .span-8,.span-6,.span-4{grid-column:span 12}
+ .card{padding:16px}
+ .page-heading{align-items:flex-start}
+ .page-heading .button{padding:9px 10px}
+ .stat-value{font-size:25px}
+ .extract-card{grid-template-columns:76px minmax(0,1fr)}
+ .extract-thumb{width:76px;height:76px}
 }
 @media(max-width:430px){
  .dl-platforms{grid-template-columns:repeat(2,minmax(0,1fr))}
- .dl-terminal-body{height:150px;font-size:11px}
+ .dl-terminal-body{height:190px;font-size:11px}
  .dl-actions .button{padding:10px 8px;font-size:12px}
- .carousel-footer{padding:9px}
+ .extract-card{grid-template-columns:1fr}
+ .extract-thumb{width:100%;height:155px}
+ .extract-download{align-items:flex-start}
+ .extract-download .button{padding:8px;font-size:11px}
+ .media-gallery-slide img,
+ .media-gallery-slide video{max-height:280px}
 }
-@media(min-width:761px) and (max-width:1000px){.app{grid-template-columns:195px minmax(0,1fr)}.span-4{grid-column:span 6}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media(min-width:761px) and (max-width:1000px){
+ .app{grid-template-columns:205px minmax(0,1fr)}
+ .span-4{grid-column:span 6}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+}
 </style>
 </head>
 <body>
 <div class="app">
 <aside class="sidebar">
  <div class="brand"><div class="brand-mark">A</div><div><strong>Aspirant</strong><small>Utility workspace</small></div></div>
- <div><div class="nav-label">WORKSPACE</div><nav class="nav" id="navigation">
-  <button class="active" data-page="overview"><span class="glyph">▦</span>Overview</button>
-  <button data-page="scraper"><span class="glyph">⌕</span>Web Scraper</button>
-  <button data-page="downloader"><span class="glyph">↓</span>Downloader</button>
-  <button data-page="history"><span class="glyph">◷</span>History</button>
-  <button data-page="more"><span class="glyph">＋</span>More Tools</button>
- </nav></div>
- <div class="sidebar-foot">Aspirant v1.1.0<br>Utility workspace</div>
+ <div>
+  <div class="nav-label">WORKSPACE</div>
+  <nav class="nav" id="navigation">
+   <button class="active" data-page="overview"><span class="glyph">▦</span>Overview</button>
+   <button data-page="scraper"><span class="glyph">⌕</span>Web Scraper</button>
+   <button data-page="downloader"><span class="glyph">↓</span>Downloader</button>
+   <button data-page="history"><span class="glyph">◷</span>History</button>
+   <button data-page="more"><span class="glyph">＋</span>More Tools</button>
+  </nav>
+ </div>
+ <div class="sidebar-foot">Aspirant v1.1.0<br>Lumen Aqua workspace</div>
 </aside>
 
 <main>
-<header class="topbar"><div class="mobile-brand"><div class="brand-mark">A</div>Aspirant</div><span class="status"><span class="dot" id="statusDot"></span><span id="serverStatus">Checking server...</span></span></header>
+<header class="topbar">
+ <div class="mobile-brand"><div class="brand-mark">A</div>Aspirant</div>
+ <span class="status"><span class="dot" id="statusDot"></span><span id="serverStatus">Checking server...</span></span>
+</header>
 
 <section class="page" id="page-overview">
- <div class="page-heading"><div><div class="eyebrow">WORKSPACE / OVERVIEW</div><h1>Your utility workspace.</h1><p>Tools for web data, media, and everyday tasks.</p></div><span class="tag">v1.1.0</span></div>
+ <div class="page-heading">
+  <div><div class="eyebrow">WORKSPACE / OVERVIEW</div><h1>Your utility workspace.</h1><p>One workspace for web data, media, and everyday tasks.</p></div>
+  <span class="tag">v1.1.0</span>
+ </div>
  <div class="grid">
-  <div class="card span-4"><div class="stat-label">Backend status</div><div class="stat-value" id="backendValue">Checking</div><div class="stat-note">Connection to Aspirant server</div></div>
+  <div class="card span-4"><div class="stat-label">Backend status</div><div class="stat-value" id="backendValue">Checking</div><div class="stat-note">Connection to the Aspirant server</div></div>
   <div class="card span-4"><div class="stat-label">Local latency</div><div class="stat-value" id="latencyValue">-- ms</div><div class="stat-note">Measured against the server</div></div>
-  <div class="card span-4"><div class="stat-label">Saved history</div><div class="stat-value" id="historyCount">0</div><div class="stat-note">Scrapes in the server session</div></div>
-  <div class="card span-8"><div class="card-head"><div><h2>Quick actions</h2><p>Jump into a tool.</p></div></div><div class="grid">
-   <div class="span-6"><button class="button" data-goto="scraper" style="width:100%">⌕ &nbsp; Web Scraper</button></div>
-   <div class="span-6"><button class="button" data-goto="downloader" style="width:100%">↓ &nbsp; Downloader</button></div>
-   <div class="span-6"><button class="button" data-goto="more" style="width:100%">＋ &nbsp; More Tools</button></div>
-   <div class="span-6"><button class="button" data-goto="history" style="width:100%">◷ &nbsp; View History</button></div>
-  </div></div>
-  <div class="card span-4"><h2>About Aspirant</h2><p style="margin-top:8px;font-size:13px">A lightweight workspace for common web utilities. Backend-dependent features need the Node.js server.</p><div class="result"><div class="stat-label">Environment</div><strong id="envValue">Browser</strong></div></div>
+  <div class="card span-4"><div class="stat-label">Saved history</div><div class="stat-value" id="historyCount">0</div><div class="stat-note">Scrapes in the current server session</div></div>
+  <div class="card span-8">
+   <div class="card-head"><div><h2>Quick actions</h2><p>Jump into a tool.</p></div></div>
+   <div class="grid">
+    <div class="span-6"><button class="button quick-card" data-goto="scraper"><span class="quick-icon">⌕</span>Web Scraper</button></div>
+    <div class="span-6"><button class="button quick-card" data-goto="downloader"><span class="quick-icon">↓</span>Downloader</button></div>
+    <div class="span-6"><button class="button quick-card" data-goto="more"><span class="quick-icon">＋</span>More Tools</button></div>
+    <div class="span-6"><button class="button quick-card" data-goto="history"><span class="quick-icon">◷</span>View History</button></div>
+   </div>
+  </div>
+  <div class="card span-4">
+   <h2>About Aspirant</h2><p style="margin-top:8px;font-size:13px">A lightweight workspace for common web utilities. Backend-dependent features need the Node.js server.</p>
+   <div class="result"><div class="stat-label">Environment</div><strong id="envValue">Browser</strong></div>
+  </div>
  </div>
 </section>
 
 <section class="page hidden" id="page-scraper">
  <div class="page-heading"><div><div class="eyebrow">TOOLS / WEB SCRAPER</div><h1>Web Scraper</h1><p>Extract public webpage metadata, headings, links, and images.</p></div></div>
  <div class="notice">Only scrape public pages you are allowed to access. Login-only content and anti-bot restrictions are not bypassed.</div>
- <div class="card"><form id="scrapeForm"><div class="field"><label for="scrapeUrl">Website URL</label><input id="scrapeUrl" type="url" placeholder="https://example.com" required></div><button class="button primary" id="scrapeButton" type="submit">Extract page</button></form><div id="scrapeResult" class="result hidden"></div></div>
+ <div class="card">
+  <form id="scrapeForm">
+   <div class="field"><label for="scrapeUrl">Website URL</label><input id="scrapeUrl" type="url" placeholder="https://example.com" required></div>
+   <button class="button primary" id="scrapeButton" type="submit">Extract page</button>
+  </form>
+  <div id="scrapeResult" class="result hidden"></div>
+ </div>
 </section>
 
 <section class="page hidden" id="page-downloader">
- <div class="page-heading"><div><div class="eyebrow">TOOLS / MEDIA</div><h1>Downloader</h1><p>Preview videos and browse photo carousels before downloading.</p></div><span class="tag">ASPIRANT DL</span></div>
+ <div class="page-heading"><div><div class="eyebrow">TOOLS / MEDIA</div><h1>Downloader</h1><p>Extract media links or download accessible files.</p></div><span class="tag">ASPIRANT DL</span></div>
  <div class="card downloader-shell">
   <div><h2>Select source</h2><p>Choose the platform that matches your link.</p></div>
   <div class="dl-platforms" id="dlPlatforms">
-   <button class="dl-platform active" type="button" data-platform="direct">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m-5-5 5 5 5-5M4 17v3h16v-3"/></svg><strong>Direct URL</strong>
+   <button class="dl-platform active" type="button" data-platform="direct" aria-pressed="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M5 16v4h14v-4"/></svg><strong>Direct URL</strong>
    </button>
-   <button class="dl-platform" type="button" data-platform="tiktok">
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 7.1a6.9 6.9 0 0 1-4.2-1.4v9.1a6.2 6.2 0 1 1-5.4-6.1v3.4a2.8 2.8 0 1 0 2 2.7V2.5h3.4c.2 2 1.7 3.8 4.2 4.1z"/></svg><strong>TikTok</strong>
+   <button class="dl-platform" type="button" data-platform="tiktok" aria-pressed="false">
+    <svg viewBox="0 0 24 24" viewBox="0 0 24 24" fill="currentColor" aria-label="TikTok"><path d="M19.6 7.1a6.7 6.7 0 0 1-4.1-1.4v8.1a6.2 6.2 0 1 1-5.4-6.1v3.4a2.9 2.9 0 1 0 2 2.7V2.5h3.4c.2 2 1.8 3.7 4.1 3.9v.7Z"/></svg><strong>TikTok</strong>
    </button>
-   <button class="dl-platform" type="button" data-platform="instagram">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg><strong>Instagram</strong>
+   <button class="dl-platform" type="button" data-platform="instagram" aria-pressed="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-label="Instagram"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg><strong>Instagram</strong>
    </button>
-   <button class="dl-platform" type="button" data-platform="whatsapp">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z"/><path d="M9 8.5c.7 2.2 2 3.6 4.4 4.5l1.2-1.2 2 1c-.1 1.6-1.2 2.4-2.6 2.2-3.6-.7-6.3-3.4-7-7-.2-1.4.7-2.5 2.2-2.6l1 2z"/></svg><strong>WhatsApp</strong>
+   <button class="dl-platform" type="button" data-platform="whatsapp" aria-pressed="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-label="WhatsApp"><path d="M20.2 11.8a8.2 8.2 0 0 1-12.1 7.2L3 20l1.1-4.8a8.2 8.2 0 1 1 16.1-3.4Z"/><path d="M8.4 8.1c.2-.5.5-.5.8-.5h.5c.2 0 .4.1.5.4l.8 1.9c.1.2.1.4-.1.6l-.7.8c-.2.2-.2.4 0 .6.5.9 1.3 1.7 2.2 2.2.2.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.4.4 0 .3-.2 1.2-.7 1.6-.5.5-1.2.7-2 .5-1-.2-2.4-.9-3.9-2.3-1.4-1.3-2.3-2.9-2.5-3.8-.2-.9.1-1.7.8-2.1Z"/></svg><strong>WhatsApp</strong>
    </button>
   </div>
-  <div class="field"><label for="downloadUrl">Media or post URL</label><input id="downloadUrl" type="url" placeholder="https://example.com/file.mp4" autocomplete="url"></div>
+  <div class="field"><label for="downloadUrl">Media or file URL</label><input id="downloadUrl" type="url" placeholder="https://example.com/file.mp4" autocomplete="url"></div>
   <div class="field"><label for="downloadName">Output filename (optional)</label><input id="downloadName" placeholder="aspirant-download.mp4" maxlength="120"></div>
   <div class="dl-platform-note" id="dlPlatformNote">Direct URL downloads accessible files through the Aspirant backend.</div>
-  <div class="dl-actions"><button class="button primary" id="downloadButton" type="button">Start download</button><button class="button" id="previewButton" type="button">Preview URL</button><button class="button" id="dlResetButton" type="button">Clear log</button></div>
+  <div class="dl-actions">
+   <button class="button primary" id="downloadButton" type="button">Start download</button>
+   <button class="button" id="previewButton" type="button">Preview URL</button>
+   <button class="button" id="dlResetButton" type="button">Clear log</button>
+  </div>
   <div class="dl-terminal">
    <div class="dl-terminal-head"><i></i><i></i><i></i><span>ASPIRANT://DOWNLOADER</span><span style="margin-left:auto" id="dlTerminalStatus">READY</span></div>
    <div class="dl-terminal-body" id="downloadLog" role="log" aria-live="polite">
-    <div class="dl-line dim">Aspirant Download Engine v1.1</div><div class="dl-line dim">Select a platform and enter a public post or file URL.</div><div class="dl-line"><span class="prefix">aspirant@dl</span>:~$ <span class="dl-cursor"></span></div>
+    <div class="dl-line dim">Aspirant Download Engine v1.1</div>
+    <div class="dl-line dim">Select a source to begin.</div>
+    <div class="dl-line"><span class="prefix">aspirant@dl</span>:~$ <span class="dl-cursor"></span></div>
    </div>
   </div>
-  <div><div class="dl-progress-track"><div class="dl-progress-fill" id="dlProgressFill"></div></div><div class="dl-progress-meta"><span id="dlProgressText">Waiting for task</span><span id="dlProgressPercent">0%</span></div></div>
+  <div>
+   <div class="dl-progress-track"><div class="dl-progress-fill" id="dlProgressFill"></div></div>
+   <div class="dl-progress-meta"><span id="dlProgressText">Waiting for task</span><span id="dlProgressPercent">0%</span></div>
+  </div>
   <div id="previewResult" class="result hidden"></div>
-  <p class="dl-platform-note">Videos autoplay muted where supported. Swipe or use arrows to browse photos, then download each photo individually. Platform extraction depends on your backend and source availability.</p>
+  <p class="dl-platform-note">Platform extraction requires a compatible server-side extractor. Only download content you are permitted to save. Private content and access restrictions are not bypassed.</p>
  </div>
 </section>
 
@@ -234,9 +455,10 @@ footer{padding:28px 0 0;text-align:center;font-size:11px;color:#6f8798}
  <div class="tool-panel hidden" id="tool-base64"><div class="card"><h2>Base64 Encoder / Decoder</h2><div class="field"><label for="baseInput">Input text</label><textarea id="baseInput" placeholder="Enter text or Base64..."></textarea></div><div class="actions"><button class="button primary" id="baseEncode">Encode</button><button class="button" id="baseDecode">Decode</button></div><div class="field" style="margin-top:16px"><label for="baseOutput">Output</label><textarea id="baseOutput" readonly></textarea></div><button class="button" data-copy="baseOutput">Copy output</button></div></div>
  <div class="tool-panel hidden" id="tool-hash"><div class="card"><h2>SHA-256</h2><p style="margin-bottom:15px">Create a SHA-256 hash in your browser.</p><div class="field"><label for="hashInput">Text to hash</label><textarea id="hashInput" placeholder="Enter text..."></textarea></div><button class="button primary" id="hashButton">Generate hash</button><div class="field" style="margin-top:16px"><label for="hashOutput">SHA-256 result</label><textarea id="hashOutput" readonly></textarea></div><button class="button" data-copy="hashOutput">Copy hash</button></div></div>
  <div class="tool-panel hidden" id="tool-qr"><div class="card"><h2>QR Generator</h2><p style="margin-bottom:15px">Generate a QR code using an external image service.</p><div class="field"><label for="qrInput">Text or URL</label><textarea id="qrInput" placeholder="https://example.com"></textarea></div><button class="button primary" id="qrGenerate">Generate QR</button><div id="qrResult" class="result hidden"></div><p style="font-size:12px;margin-top:12px">The content is sent to the QR service when the image is requested. Do not enter passwords or confidential data.</p></div></div>
- <div class="tool-panel hidden" id="tool-api"><div class="card"><h2>API Tester</h2><p style="margin-bottom:15px">Send requests to public APIs from the server.</p><div class="notice">Only test APIs you are authorized to use. The server should validate requested URLs.</div><div class="field"><label for="apiUrl">Request URL</label><input id="apiUrl" type="url" placeholder="https://api.example.com/data"></div><div class="row"><div class="field grow"><label for="apiMethod">Method</label><select id="apiMethod"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option><option>HEAD</option></select></div><div class="field grow"><label for="apiType">Body content type</label><select id="apiType"><option value="application/json">JSON</option><option value="text/plain">Text</option></select></div></div><div class="field"><label for="apiHeaders">Headers (JSON object)</label><textarea id="apiHeaders" placeholder='{"Accept":"application/json"}'></textarea></div><div class="field"><label for="apiBody">Request body</label><textarea id="apiBody" placeholder='{"example":true}'></textarea></div><button class="button primary" id="apiSend">Send request</button><div id="apiResult" class="result hidden"></div></div></div>
+ <div class="tool-panel hidden" id="tool-api"><div class="card"><h2>API Tester</h2><p style="margin-bottom:15px">Send requests to public APIs from the server.</p><div class="notice">Only test APIs you are authorized to use. Server-side URL validation is important for protecting the backend.</div><div class="field"><label for="apiUrl">Request URL</label><input id="apiUrl" type="url" placeholder="https://api.example.com/data"></div><div class="row"><div class="field grow"><label for="apiMethod">Method</label><select id="apiMethod"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option><option>HEAD</option></select></div><div class="field grow"><label for="apiType">Body content type</label><select id="apiType"><option value="application/json">JSON</option><option value="text/plain">Text</option></select></div></div><div class="field"><label for="apiHeaders">Headers (JSON object)</label><textarea id="apiHeaders" placeholder='{"Accept":"application/json"}'></textarea></div><div class="field"><label for="apiBody">Request body</label><textarea id="apiBody" placeholder='{"example":true}'></textarea></div><button class="button primary" id="apiSend">Send request</button><div id="apiResult" class="result hidden"></div></div></div>
  <div class="tool-panel hidden" id="tool-image"><div class="card"><h2>Image Tools</h2><p style="margin-bottom:15px">Edit an image locally in your browser and export the result.</p><div class="field"><label for="imageFile">Choose image</label><input id="imageFile" type="file" accept="image/*"></div><div id="imageEditor" class="hidden"><div class="result" style="text-align:center"><canvas id="imageCanvas" style="max-width:100%;height:auto"></canvas></div><div class="grid" style="margin-top:14px"><div class="span-6 field"><label for="brightness">Brightness</label><input id="brightness" type="range" min="50" max="150" value="100"></div><div class="span-6 field"><label for="contrast">Contrast</label><input id="contrast" type="range" min="50" max="150" value="100"></div><div class="span-6 field"><label for="saturation">Saturation</label><input id="saturation" type="range" min="0" max="200" value="100"></div><div class="span-6 field"><label for="blur">Blur</label><input id="blur" type="range" min="0" max="5" value="0" step=".5"></div></div><div class="actions"><button class="button" id="rotateImage">Rotate 90°</button><button class="button" id="flipImage">Flip horizontal</button><button class="button" id="resetImage">Reset</button></div><div class="row" style="margin-top:15px"><div class="field grow"><label for="imageFormat">Export format</label><select id="imageFormat"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></div><div class="field grow"><label for="imageQuality">Quality (JPG/WebP)</label><input id="imageQuality" type="range" min="40" max="100" value="90"></div></div><button class="button primary" id="saveImage">Export image</button></div><p style="font-size:12px;margin-top:12px">Basic local editing only. AI background removal, upscaling, object removal, and generative fill are not included.</p></div></div>
 </section>
+
 <footer>Aspirant · Lightweight utility workspace</footer>
 </main>
 </div>
@@ -248,8 +470,10 @@ const $=id=>document.getElementById(id);
 const state={page:"overview",tool:"json",history:[],image:null,rotation:0,flip:false,originalURL:null};
 let toastTimer;
 function toast(message){
- $("toast").textContent=message;$("toast").classList.remove("hidden");
- clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),2800);
+ $("toast").textContent=message;
+ $("toast").classList.remove("hidden");
+ clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),2800);
 }
 async function request(url,options={}){
  const response=await fetch(url,options);
@@ -277,13 +501,15 @@ async function checkServer(){
   const health=await request("/api/health");
   $("backendValue").textContent=health.ok?"Online":"Offline";
   $("serverStatus").textContent=health.ok?"Backend online":"Backend offline";
-  $("statusDot").style.background=health.ok?"#8bf0c2":"#ff8e9b";
+  $("statusDot").style.background=health.ok?"#75f0c0":"#ff8585";
   $("envValue").textContent="Node.js backend";
   const ping=await request("/api/ping");
   $("latencyValue").textContent=Number.isFinite(ping.latency)?`${ping.latency} ms`:"-- ms";
  }catch{
-  $("backendValue").textContent="Offline";$("serverStatus").textContent="Backend unavailable";
-  $("statusDot").style.background="#ff8e9b";$("latencyValue").textContent="-- ms";
+  $("backendValue").textContent="Offline";
+  $("serverStatus").textContent="Backend unavailable";
+  $("statusDot").style.background="#ff8585";
+  $("latencyValue").textContent="-- ms";
   $("envValue").textContent="Browser only";
  }
 }
@@ -291,46 +517,88 @@ checkServer();
 
 $("scrapeForm").addEventListener("submit",async event=>{
  event.preventDefault();
- const button=$("scrapeButton");button.disabled=true;button.textContent="Extracting...";
- $("scrapeResult").classList.remove("hidden");$("scrapeResult").textContent="Connecting to the server...";
+ const button=$("scrapeButton");
+ button.disabled=true;
+ button.textContent="Extracting...";
+ $("scrapeResult").classList.remove("hidden");
+ $("scrapeResult").textContent="Connecting to the server...";
  try{
-  const data=await request("/api/scrape",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:$("scrapeUrl").value.trim()})});
+  const data=await request("/api/scrape",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({url:$("scrapeUrl").value.trim()})
+  });
   const headings=Array.isArray(data.headings)?data.headings:[];
   const links=Array.isArray(data.links)?data.links:[];
   const images=Array.isArray(data.images)?data.images:[];
-  $("scrapeResult").innerHTML=`<div class="card-head"><h2>${escapeHTML(data.title||"Untitled page")}</h2><span class="tag">Extracted</span></div><p style="margin-bottom:12px">${escapeHTML(data.description||"No meta description found.")}</p><div class="field"><label>Source URL</label><a href="${escapeHTML(data.source||$("scrapeUrl").value)}" target="_blank" rel="noopener noreferrer">${escapeHTML(data.source||$("scrapeUrl").value)}</a></div><div class="grid"><div class="span-4"><div class="stat-label">Headings</div><div class="stat-value">${headings.length}</div></div><div class="span-4"><div class="stat-label">Links</div><div class="stat-value">${links.length}</div></div><div class="span-4"><div class="stat-label">Images</div><div class="stat-value">${images.length}</div></div></div><div class="field" style="margin-top:15px"><label>Headings</label><pre>${escapeHTML(headings.map(h=>`[${h.tag}] ${h.text}`).join("\n")||"None")}</pre></div><div class="field"><label>Links</label><pre>${escapeHTML(links.map(l=>`${l.text||"(no text)"}\n${l.url}`).join("\n\n")||"None")}</pre></div><div class="field"><label>Images</label><pre>${escapeHTML(images.map(i=>`${i.alt||""}\n${i.url}`).join("\n\n")||"None")}</pre></div><div class="actions"><button class="button" id="exportScrapeJSON">Export JSON</button><button class="button" id="exportScrapeCSV">Export links CSV</button></div>`;
+  $("scrapeResult").innerHTML=`
+   <div class="card-head"><h2>${escapeHTML(data.title||"Untitled page")}</h2><span class="tag">Extracted</span></div>
+   <p style="margin-bottom:12px">${escapeHTML(data.description||"No meta description found.")}</p>
+   <div class="field"><label>Source URL</label><a href="${escapeHTML(data.source||$("scrapeUrl").value)}" target="_blank" rel="noopener noreferrer">${escapeHTML(data.source||$("scrapeUrl").value)}</a></div>
+   <div class="grid">
+    <div class="span-4"><div class="stat-label">Headings</div><div class="stat-value">${headings.length}</div></div>
+    <div class="span-4"><div class="stat-label">Links</div><div class="stat-value">${links.length}</div></div>
+    <div class="span-4"><div class="stat-label">Images</div><div class="stat-value">${images.length}</div></div>
+   </div>
+   <div class="field" style="margin-top:15px"><label>Headings</label><pre>${escapeHTML(headings.map(h=>`[${h.tag}] ${h.text}`).join("\n")||"None")}</pre></div>
+   <div class="field"><label>Links</label><pre>${escapeHTML(links.map(l=>`${l.text||"(no text)"}\n${l.url}`).join("\n\n")||"None")}</pre></div>
+   <div class="field"><label>Images</label><pre>${escapeHTML(images.map(i=>`${i.alt||""}\n${i.url}`).join("\n\n")||"None")}</pre></div>
+   <div class="actions"><button class="button" id="exportScrapeJSON">Export JSON</button><button class="button" id="exportScrapeCSV">Export links CSV</button></div>`;
   $("exportScrapeJSON").onclick=()=>downloadBlob(JSON.stringify(data,null,2),"scrape-result.json","application/json");
   $("exportScrapeCSV").onclick=()=>downloadBlob("text,url\n"+links.map(l=>`"${String(l.text||"").replace(/"/g,'""')}","${String(l.url||"").replace(/"/g,'""')}"`).join("\n"),"scrape-links.csv","text/csv");
-  await loadHistory();$("historyCount").textContent=state.history.length;toast("Extraction complete");
- }catch(error){$("scrapeResult").textContent="Error: "+error.message}
- finally{button.disabled=false;button.textContent="Extract page"}
+  await loadHistory();
+  $("historyCount").textContent=state.history.length;
+  toast("Extraction complete");
+ }catch(error){
+  $("scrapeResult").textContent="Error: "+error.message;
+ }finally{
+  button.disabled=false;
+  button.textContent="Extract page";
+ }
 });
 
 async function loadHistory(){
  try{
-  const data=await request("/api/history");state.history=Array.isArray(data)?data:[];
-  $("historyCount").textContent=state.history.length;renderHistory();
- }catch{$("historyList").innerHTML='<div class="empty">Start the Aspirant backend to access history.</div>'}
+  const data=await request("/api/history");
+  state.history=Array.isArray(data)?data:[];
+  $("historyCount").textContent=state.history.length;
+  renderHistory();
+ }catch{
+  $("historyList").innerHTML='<div class="empty">Start the Aspirant backend to access history.</div>';
+ }
 }
 function renderHistory(){
  const query=$("historySearch").value.toLowerCase().trim();
  const items=state.history.filter(item=>(item.title||"").toLowerCase().includes(query)||(item.source||"").toLowerCase().includes(query));
- $("historyList").innerHTML=items.length?items.map(item=>`<div class="history-item"><div class="meta"><strong>${escapeHTML(item.title||"Untitled page")}</strong><small>${escapeHTML(item.source)}<br>${escapeHTML(item.timestamp)}</small></div><div class="actions"><button class="button small" data-history-view="${escapeHTML(item.id)}">View</button><button class="button small danger" data-history-delete="${escapeHTML(item.id)}">Delete</button></div></div>`).join(""):'<div class="empty">No matching history entries.</div>';
+ $("historyList").innerHTML=items.length?items.map(item=>`
+  <div class="history-item">
+   <div class="meta"><strong>${escapeHTML(item.title||"Untitled page")}</strong><small>${escapeHTML(item.source)}<br>${escapeHTML(item.timestamp)}</small></div>
+   <div class="actions"><button class="button small" data-history-view="${escapeHTML(item.id)}">View</button><button class="button small danger" data-history-delete="${escapeHTML(item.id)}">Delete</button></div>
+  </div>`).join(""):'<div class="empty">No matching history entries.</div>';
  document.querySelectorAll("[data-history-view]").forEach(button=>button.addEventListener("click",()=>{
-  const item=state.history.find(entry=>String(entry.id)===button.dataset.historyView);if(!item)return;
-  setPage("scraper");$("scrapeUrl").value=item.source;$("scrapeResult").classList.remove("hidden");
+  const item=state.history.find(entry=>String(entry.id)===button.dataset.historyView);
+  if(!item)return;
+  setPage("scraper");
+  $("scrapeUrl").value=item.source;
+  $("scrapeResult").classList.remove("hidden");
   $("scrapeResult").innerHTML=`<h2>${escapeHTML(item.title||"Untitled page")}</h2><p style="margin:8px 0 12px">${escapeHTML(item.description||"")}</p><pre>${escapeHTML(JSON.stringify(item,null,2))}</pre>`;
  }));
  document.querySelectorAll("[data-history-delete]").forEach(button=>button.addEventListener("click",async()=>{
-  try{await request("/api/history/"+encodeURIComponent(button.dataset.historyDelete),{method:"DELETE"});await loadHistory();toast("History entry deleted")}
-  catch(error){toast(error.message)}
+  try{
+   await request("/api/history/"+encodeURIComponent(button.dataset.historyDelete),{method:"DELETE"});
+   await loadHistory();
+   toast("History entry deleted");
+  }catch(error){toast(error.message)}
  }));
 }
 $("historySearch").addEventListener("input",renderHistory);
 $("clearHistory").addEventListener("click",async()=>{
  if(!confirm("Delete all history entries?"))return;
- try{await request("/api/history",{method:"DELETE"});await loadHistory();toast("History cleared")}
- catch(error){toast(error.message)}
+ try{
+  await request("/api/history",{method:"DELETE"});
+  await loadHistory();
+  toast("History cleared");
+ }catch(error){toast(error.message)}
 });
 
 document.querySelectorAll("#toolTabs button").forEach(button=>button.addEventListener("click",()=>{
@@ -342,7 +610,8 @@ document.querySelectorAll("#toolTabs button").forEach(button=>button.addEventLis
 
 document.querySelectorAll("[data-json]").forEach(button=>button.addEventListener("click",()=>{
  try{
-  const value=JSON.parse($("jsonInput").value);let output;
+  const value=JSON.parse($("jsonInput").value);
+  let output;
   if(button.dataset.json==="pretty")output=JSON.stringify(value,null,2);
   if(button.dataset.json==="minify")output=JSON.stringify(value);
   if(button.dataset.json==="sort"){
@@ -350,7 +619,8 @@ document.querySelectorAll("[data-json]").forEach(button=>button.addEventListener
    output=JSON.stringify(sort(value),null,2);
   }
   if(button.dataset.json==="validate")output="Valid JSON";
-  $("jsonOutput").value=output;toast("JSON processed");
+  $("jsonOutput").value=output;
+  toast("JSON processed");
  }catch(error){$("jsonOutput").value=`Invalid JSON: ${error.message}`}
 }));
 document.querySelectorAll("[data-copy]").forEach(button=>button.addEventListener("click",async()=>{
@@ -361,7 +631,8 @@ document.querySelectorAll("[data-copy]").forEach(button=>button.addEventListener
 
 $("waOpen").addEventListener("click",()=>{
  let phone=$("waPhone").value.replace(/[^\d+]/g,"").replace(/^\+/,"");
- if(phone.startsWith("0"))phone="62"+phone.slice(1);else if(phone.startsWith("8"))phone="62"+phone;
+ if(phone.startsWith("0"))phone="62"+phone.slice(1);
+ else if(phone.startsWith("8"))phone="62"+phone;
  if(!/^62\d{8,13}$/.test(phone)){toast("Enter a valid Indonesian number");return}
  const url=`https://wa.me/${phone}${$("waMessage").value.trim()?"?text="+encodeURIComponent($("waMessage").value.trim()):""}`;
  window.open(url,"_blank","noopener,noreferrer");
@@ -377,312 +648,654 @@ $("baseDecode").addEventListener("click",()=>{
 $("hashButton").addEventListener("click",async()=>{
  try{
   if(!crypto.subtle)throw new Error("SHA-256 requires HTTPS or localhost");
-  const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode($("hashInput").value));
+  const bytes=new TextEncoder().encode($("hashInput").value);
+  const digest=await crypto.subtle.digest("SHA-256",bytes);
   $("hashOutput").value=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("");
  }catch(error){toast(error.message)}
 });
 $("qrGenerate").addEventListener("click",()=>{
- const value=$("qrInput").value.trim();if(!value){toast("Enter text or a URL");return}
+ const value=$("qrInput").value.trim();
+ if(!value){toast("Enter text or a URL");return}
  const src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&data="+encodeURIComponent(value);
- $("qrResult").classList.remove("hidden");$("qrResult").replaceChildren();
- const wrap=document.createElement("div");wrap.style.textAlign="center";
- const img=document.createElement("img");img.src=src;img.alt="Generated QR code";img.style.cssText="width:min(320px,100%);background:white;padding:8px;border-radius:8px";
- const link=document.createElement("a");link.href=src;link.target="_blank";link.rel="noopener noreferrer";link.className="button";link.textContent="Open QR image";
- const actions=document.createElement("div");actions.className="actions";actions.style.justifyContent="center";actions.appendChild(link);
- wrap.append(img,actions);$("qrResult").appendChild(wrap);
+ $("qrResult").classList.remove("hidden");
+ $("qrResult").replaceChildren();
+ const wrap=document.createElement("div");
+ wrap.style.textAlign="center";
+ const img=document.createElement("img");
+ img.src=src;img.alt="Generated QR code";
+ img.style.cssText="width:min(320px,100%);background:white;padding:8px;border-radius:8px";
+ const link=document.createElement("a");
+ link.href=src;link.target="_blank";link.rel="noopener noreferrer";link.className="button";link.textContent="Open QR image";
+ const actions=document.createElement("div");
+ actions.className="actions";actions.style.justifyContent="center";actions.appendChild(link);
+ wrap.append(img,actions);
+ $("qrResult").appendChild(wrap);
 });
+
 $("apiSend").addEventListener("click",async()=>{
- const button=$("apiSend");button.disabled=true;$("apiResult").classList.remove("hidden");$("apiResult").textContent="Sending request...";
+ const button=$("apiSend");
+ button.disabled=true;
+ $("apiResult").classList.remove("hidden");
+ $("apiResult").textContent="Sending request...";
  try{
   const headers=JSON.parse($("apiHeaders").value||"{}");
   if(!headers||typeof headers!=="object"||Array.isArray(headers))throw new Error("Headers must be a JSON object");
-  const method=$("apiMethod").value,body=["GET","HEAD"].includes(method)?undefined:$("apiBody").value;
-  const result=await request("/api/request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:$("apiUrl").value.trim(),method,headers,body,contentType:$("apiType").value})});
-  $("apiResult").innerHTML=`<div class="card-head"><h3>HTTP ${escapeHTML(result.status)} ${escapeHTML(result.statusText||"")}</h3><span class="tag">${escapeHTML(result.duration)} ms</span></div><div class="field"><label>Response headers</label><pre>${escapeHTML(JSON.stringify(result.headers,null,2))}</pre></div><div class="field"><label>Response body</label><pre>${escapeHTML(result.body)}</pre></div>`;
+  const method=$("apiMethod").value;
+  const body=["GET","HEAD"].includes(method)?undefined:$("apiBody").value;
+  const result=await request("/api/request",{
+   method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({url:$("apiUrl").value.trim(),method,headers,body,contentType:$("apiType").value})
+  });
+  $("apiResult").innerHTML=`
+   <div class="card-head"><h3>HTTP ${escapeHTML(result.status)} ${escapeHTML(result.statusText||"")}</h3><span class="tag">${escapeHTML(result.duration)} ms</span></div>
+   <div class="field"><label>Response headers</label><pre>${escapeHTML(JSON.stringify(result.headers,null,2))}</pre></div>
+   <div class="field"><label>Response body</label><pre>${escapeHTML(result.body)}</pre></div>`;
  }catch(error){$("apiResult").textContent="Error: "+error.message}
  finally{button.disabled=false}
 });
 function downloadBlob(content,name,type){
- const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");
- a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ const blob=new Blob([content],{type});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
-/* =========================================================
-   ASPIRANT DOWNLOADER — direct file + TikTok + Instagram
-   ========================================================= */
+/* ASPIRANT DOWNLOADER */
 function safeFilename(value){
  return String(value||"download").split(/[?#]/)[0].split(/[\\/]/).pop().replace(/[^\w.-]+/g,"_").slice(0,120)||"download";
 }
-const dlState={platform:"direct",running:false,controller:null,media:[],photoIndex:0,touchStartX:0};
+const dlState={platform:"direct",running:false,controller:null};
 const dlNotes={
- direct:"Download a publicly accessible file URL through the Aspirant backend.",
- tiktok:"Paste a public TikTok video or photo post URL to extract available media.",
- instagram:"Paste a public Instagram Reel, post, or carousel URL to extract available media.",
- whatsapp:"Open an official WhatsApp link. Private chat media cannot be retrieved."
+ direct:"Direct URL downloads accessible files through the Aspirant backend.",
+ tiktok:"Paste a public TikTok video URL. Results come from the configured /api/extract endpoint.",
+ instagram:"Paste a public Instagram post, Reel, or video URL. Results come from /api/extract.",
+ whatsapp:"WhatsApp opens the official service. It cannot retrieve private chat media."
 };
 function dlLog(message,type="line"){
- const line=document.createElement("div");line.className="dl-line "+type;line.textContent=message;
- const log=$("downloadLog");log.appendChild(line);log.scrollTop=log.scrollHeight;
+ const line=document.createElement("div");
+ line.className="dl-line "+type;
+ line.textContent=message;
+ const log=$("downloadLog");
+ log.appendChild(line);
+ log.scrollTop=log.scrollHeight;
 }
 function dlClear(){
  $("downloadLog").replaceChildren();
- dlLog("Aspirant Download Engine v1.1","dim");dlLog("Ready for a new task.","dim");
+ dlLog("Aspirant Download Engine v1.1","dim");
+ dlLog("Ready for a new task.","dim");
 }
 function dlProgress(percent,label){
  const value=Math.max(0,Math.min(100,percent));
- $("dlProgressFill").style.width=value+"%";$("dlProgressPercent").textContent=Math.round(value)+"%";$("dlProgressText").textContent=label;
+ $("dlProgressFill").style.width=value+"%";
+ $("dlProgressPercent").textContent=Math.round(value)+"%";
+ $("dlProgressText").textContent=label;
 }
 function dlStatus(status){$("dlTerminalStatus").textContent=status}
 function dlFormatBytes(bytes){
  if(!Number.isFinite(bytes)||bytes<0)return "--";
  if(bytes<1024)return bytes+" B";
- const units=["KB","MB","GB"];let size=bytes/1024,index=0;
+ const units=["KB","MB","GB","TB"];
+ let size=bytes/1024,index=0;
  while(size>=1024&&index<units.length-1){size/=1024;index++}
  return size.toFixed(2)+" "+units[index];
 }
 function getDownloadURL(){
- const value=$("downloadUrl").value.trim();let url;
+ const value=$("downloadUrl").value.trim();
+ let url;
  try{url=new URL(value)}catch{throw new Error("Enter a valid URL.")}
  if(!["http:","https:"].includes(url.protocol))throw new Error("Only HTTP and HTTPS URLs are supported.");
  return url;
 }
 function dlSetBusy(busy){
- dlState.running=busy;$("downloadButton").disabled=busy;$("previewButton").disabled=busy;$("dlResetButton").disabled=busy;
+ dlState.running=busy;
+ $("downloadButton").disabled=busy;
+ $("previewButton").disabled=busy;
+ $("dlResetButton").disabled=busy;
  $("downloadButton").textContent=busy?"Working...":"Start download";
- document.querySelectorAll("[data-platform]").forEach(button=>button.disabled=busy);
 }
 function openWhatsAppURL(value){
- let url;try{url=new URL(value)}catch{throw new Error("Enter a valid WhatsApp URL.")}
+ let url;
+ try{url=new URL(value)}catch{throw new Error("Enter a valid WhatsApp URL.")}
  if(url.protocol!=="https:"||!/(^|\.)wa\.me$|(^|\.)whatsapp\.com$/i.test(url.hostname))throw new Error("Use an official WhatsApp URL.");
  window.open(url.href,"_blank","noopener,noreferrer");
 }
-function clearMediaResults(){
- dlState.media=[];dlState.photoIndex=0;
- $("previewResult").replaceChildren();$("previewResult").classList.add("hidden");
+function isLikelyVideo(item){
+ if(!item)return false;
+ const fmt=String(item.format||item.mime||item.quality||"").toLowerCase();
+ const url=String(item.url||"").toLowerCase();
+ if(/video|mp4|webm|mov|m4v|ogg/.test(fmt))return true;
+ if(/\.(mp4|webm|mov|m4v|ogg)(?:$|\?)/i.test(url))return true;
+ if(/video/.test(String(item.mime||"").toLowerCase()))return true;
+ return false;
+}
+function isLikelyImage(item){
+ if(!item)return false;
+ const fmt=String(item.format||item.mime||item.quality||"").toLowerCase();
+ const url=String(item.url||"").toLowerCase();
+ if(/image|jpg|jpeg|png|webp|gif|heic/.test(fmt))return true;
+ if(/\.(jpe?g|png|webp|gif|heic|bmp)(?:$|\?)/i.test(url))return true;
+ if(/image\//.test(String(item.mime||"").toLowerCase()))return true;
+ return false;
+}
+function normaliseExtraction(raw){
+ if(!raw||typeof raw!=="object")throw new Error("The extractor returned an invalid response.");
+ const nested=raw.data&&typeof raw.data==="object"&&!Array.isArray(raw.data)?raw.data:{};
+ const merged={...raw,...nested};
+ if(raw.success===false||raw.ok===false||raw.code&&raw.code!==0&&!merged.downloads){
+  throw new Error(raw.error||raw.message||raw.msg||"The extractor could not process this URL.");
+ }
+ let downloads=merged.downloads||merged.medias||merged.formats||merged.links||merged.results||[];
+ if(!Array.isArray(downloads))downloads=[downloads];
+ if(!downloads.length){
+  const single=merged.download_url||merged.downloadUrl||merged.video_url||merged.videoUrl||merged.url;
+  if(typeof single==="string"&&/^https?:\/\//i.test(single))downloads=[{url:single,quality:merged.quality||"Available media"}];
+ }
+ const clean=downloads.map((item,index)=>{
+  if(typeof item==="string")item={url:item};
+  if(!item||typeof item!=="object")return null;
+  const url=item.url||item.download_url||item.downloadUrl||item.link||item.src||item.file_url||item.fileUrl;
+  if(typeof url!=="string")return null;
+  try{const parsed=new URL(url);if(!["http:","https:"].includes(parsed.protocol))return null}catch{return null}
+  return {
+   url,
+   quality:item.quality||item.label||item.resolution||item.type||item.format||`Option ${index+1}`,
+   format:item.format||item.extension||"",
+   filename:item.filename||item.file_name||item.name||"",
+   size:item.size||item.filesize||"",
+   mime:item.mime_type||item.mimeType||"",
+   thumbnail:item.thumbnail||item.thumbnail_url||item.cover||"",
+   original:item
+  };
+ }).filter(Boolean);
+ return {
+  title:merged.title||merged.desc||merged.description||merged.caption||"Media extraction",
+  description:merged.description||merged.caption||"",
+  author:merged.author?.nickname||merged.author?.name||merged.author?.unique_id||merged.username||merged.owner||"",
+  thumbnail:merged.thumbnail||merged.thumbnail_url||merged.cover||merged.cover_url||"",
+  duration:merged.duration||"",
+  downloads:clean,
+  raw:merged
+ };
+}
+async function extractPlatform(platform){
+ const url=getDownloadURL();
+ if(platform!=="tiktok"&&platform!=="instagram")throw new Error("Unsupported extractor.");
+ dlLog("[INIT] Starting "+platform.toUpperCase()+" extraction.");
+ dlLog("[URL] "+url.href,"dim");
+ dlProgress(10,"Connecting to extractor");
+ dlStatus("EXTRACTING");
+ const raw=await request("/api/extract",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({url:url.href,platform})
+ });
+ const data=normaliseExtraction(raw);
+ if(!data.downloads.length){
+  throw new Error("Extractor response contains no usable download links. Check the server extractor response format.");
+ }
+ dlLog("[OK] Extractor returned "+data.downloads.length+" option(s).");
+ dlProgress(100,"Extraction complete");
+ dlStatus("EXTRACTED");
+ renderExtractionResults(data,platform);
+ return data;
+}
+
+/* Build media gallery: autoplay video, swipeable photos with prev/next */
+function buildMediaGallery(items){
+ const gallery=document.createElement("div");
+ gallery.className="media-gallery";
+ const viewport=document.createElement("div");
+ viewport.className="media-gallery-viewport";
+
+ const slides=[];
+ items.forEach((item,index)=>{
+  const slide=document.createElement("div");
+  slide.className="media-gallery-slide"+(index===0?" active":"");
+  const isVideo=isLikelyVideo(item);
+  const isImage=isLikelyImage(item)||!isVideo;
+
+  if(isVideo){
+   const video=document.createElement("video");
+   video.src=item.url;
+   video.controls=true;
+   video.autoplay=true;
+   video.muted=true;
+   video.playsInline=true;
+   video.loop=false;
+   video.setAttribute("playsinline","");
+   video.setAttribute("muted","");
+   video.onerror=()=>{
+    const fallback=document.createElement("p");
+    fallback.className="muted";
+    fallback.style.padding="20px";
+    fallback.textContent="Video tidak bisa diputar di browser ini.";
+    slide.replaceChildren(fallback);
+   };
+   // Try play after insert
+   video.addEventListener("loadeddata",()=>{
+    video.play().catch(()=>{});
+   });
+   slide.appendChild(video);
+  }else{
+   const img=document.createElement("img");
+   img.src=item.url;
+   img.alt=item.quality||`Foto ${index+1}`;
+   img.loading=index===0?"eager":"lazy";
+   img.onerror=()=>{
+    const fallback=document.createElement("p");
+    fallback.className="muted";
+    fallback.style.padding="20px";
+    fallback.textContent="Gambar tidak bisa dimuat.";
+    slide.replaceChildren(fallback);
+   };
+   slide.appendChild(img);
+  }
+  viewport.appendChild(slide);
+  slides.push(slide);
+ });
+
+ gallery.appendChild(viewport);
+
+ let current=0;
+ function goTo(index){
+  if(index<0||index>=slides.length)return;
+  // Pause any playing videos in other slides
+  slides.forEach((s,i)=>{
+   const v=s.querySelector("video");
+   if(v){
+    if(i===index){
+     v.muted=true;
+     v.play().catch(()=>{});
+    }else{
+     v.pause();
+    }
+   }
+   s.classList.toggle("active",i===index);
+  });
+  current=index;
+  if(counter)counter.textContent=`${current+1} / ${slides.length}`;
+  if(dots){
+   dots.querySelectorAll(".media-gallery-dot").forEach((d,i)=>d.classList.toggle("active",i===index));
+  }
+  if(prevBtn)prevBtn.disabled=current===0;
+  if(nextBtn)nextBtn.disabled=current===slides.length-1;
+ }
+
+ let counter=null,dots=null,prevBtn=null,nextBtn=null;
+
+ if(slides.length>1){
+  const nav=document.createElement("div");
+  nav.className="media-gallery-nav";
+
+  prevBtn=document.createElement("button");
+  prevBtn.type="button";
+  prevBtn.className="button";
+  prevBtn.textContent="‹";
+  prevBtn.setAttribute("aria-label","Sebelumnya");
+  prevBtn.addEventListener("click",()=>goTo(current-1));
+
+  counter=document.createElement("span");
+  counter.className="media-gallery-counter";
+  counter.textContent=`1 / ${slides.length}`;
+
+  nextBtn=document.createElement("button");
+  nextBtn.type="button";
+  nextBtn.className="button";
+  nextBtn.textContent="›";
+  nextBtn.setAttribute("aria-label","Berikutnya");
+  nextBtn.addEventListener("click",()=>goTo(current+1));
+
+  nav.append(prevBtn,counter,nextBtn);
+  gallery.appendChild(nav);
+
+  dots=document.createElement("div");
+  dots.className="media-gallery-dots";
+  slides.forEach((_,i)=>{
+   const dot=document.createElement("button");
+   dot.type="button";
+   dot.className="media-gallery-dot"+(i===0?" active":"");
+   dot.setAttribute("aria-label",`Slide ${i+1}`);
+   dot.addEventListener("click",()=>goTo(i));
+   dots.appendChild(dot);
+  });
+  gallery.appendChild(dots);
+
+  prevBtn.disabled=true;
+
+  // Touch swipe support
+  let touchStartX=0;
+  viewport.addEventListener("touchstart",e=>{
+   touchStartX=e.changedTouches[0].screenX;
+  },{passive:true});
+  viewport.addEventListener("touchend",e=>{
+   const dx=e.changedTouches[0].screenX-touchStartX;
+   if(Math.abs(dx)>40){
+    if(dx<0)goTo(current+1);
+    else goTo(current-1);
+   }
+  },{passive:true});
+ }
+
+ return gallery;
+}
+
+function renderExtractionResults(data,platform){
+ const root=$("previewResult");
+ root.replaceChildren();
+ root.classList.remove("hidden");
+ const heading=document.createElement("div");
+ heading.className="card-head";
+ const title=document.createElement("h2");
+ title.textContent=data.title||"Media extraction";
+ const badge=document.createElement("span");
+ badge.className="tag";
+ badge.textContent=platform.toUpperCase();
+ heading.append(title,badge);
+ root.appendChild(heading);
+ if(data.description){
+  const desc=document.createElement("p");
+  desc.style.marginBottom="10px";
+  desc.textContent=data.description;
+  root.appendChild(desc);
+ }
+ const meta=document.createElement("p");
+ meta.style.fontSize="12px";
+ meta.textContent=[data.author?"By "+data.author:"",data.duration?"Duration: "+data.duration:""].filter(Boolean).join(" · ")||"Available media links";
+ root.appendChild(meta);
+
+ // Prefer actual media URLs for gallery; fall back to thumbnail only if no media
+ const galleryItems=data.downloads.length?data.downloads:(data.thumbnail?[{url:data.thumbnail,quality:"Thumbnail"}]:[]);
+ if(galleryItems.length){
+  const gallery=buildMediaGallery(galleryItems);
+  root.appendChild(gallery);
+ }
+
+ const list=document.createElement("div");
+ list.className="extract-downloads";
+
+ // Count photos vs videos for labeling
+ let photoIndex=0;
+ let videoIndex=0;
+ data.downloads.forEach((item,index)=>{
+  const card=document.createElement("div");
+  card.className="extract-download";
+  const info=document.createElement("div");
+  const name=document.createElement("strong");
+
+  const isVideo=isLikelyVideo(item);
+  const isImage=isLikelyImage(item);
+
+  let label;
+  if(isImage&&!isVideo){
+   photoIndex++;
+   label=`Foto ${photoIndex}`;
+  }else if(isVideo){
+   videoIndex++;
+   label=videoIndex===1&&data.downloads.filter(isLikelyVideo).length===1?"Video":`Video ${videoIndex}`;
+  }else{
+   label=item.quality||`Opsi ${index+1}`;
+  }
+  name.textContent=label;
+
+  const details=document.createElement("small");
+  details.textContent=[item.format,item.size?String(item.size):"",item.mime,item.quality&&item.quality!==label?item.quality:""].filter(Boolean).join(" · ")||"Media file";
+  info.append(name,details);
+
+  const button=document.createElement("button");
+  button.type="button";
+  button.className="button primary small";
+  button.textContent="Download";
+  button.addEventListener("click",()=>downloadExtracted(item,platform,index));
+  card.append(info,button);
+  list.appendChild(card);
+ });
+ root.appendChild(list);
+
+ const source=document.createElement("div");
+ source.className="field";
+ source.style.marginTop="15px";
+ const label=document.createElement("label");
+ label.textContent="Source URL";
+ const link=document.createElement("a");
+ link.href=$("downloadUrl").value.trim();
+ link.target="_blank";link.rel="noopener noreferrer";link.textContent=$("downloadUrl").value.trim();
+ source.append(label,link);
+ root.appendChild(source);
+}
+
+async function downloadStream(url,filename){
+ if(dlState.running)return;
+ dlState.controller=new AbortController();
+ dlSetBusy(true);
+ dlProgress(5,"Connecting to backend");
+ dlStatus("CONNECTING");
+ const safeName=safeFilename(filename||$("downloadName").value.trim()||new URL(url).pathname.split("/").pop()||"aspirant-download");
+ try{
+  const endpoint="/api/download?url="+encodeURIComponent(url)+"&name="+encodeURIComponent(safeName);
+  dlLog("[CONNECT] Requesting Aspirant download endpoint.");
+  const response=await fetch(endpoint,{method:"GET",signal:dlState.controller.signal});
+  if(!response.ok){
+   let message="HTTP "+response.status;
+   try{const data=await response.json();if(data.error)message=data.error}catch{}
+   throw new Error(message);
+  }
+  const totalHeader=response.headers.get("content-length");
+  const total=totalHeader?Number(totalHeader):0;
+  if(!response.body)throw new Error("Streaming response is not supported by this browser.");
+  const reader=response.body.getReader(),chunks=[];
+  let received=0;
+  const startTime=performance.now();
+  dlLog("[HTTP] "+response.status+" "+response.statusText);
+  dlLog("[STREAM] Receiving file bytes.");
+  while(true){
+   const {done,value}=await reader.read();
+   if(done)break;
+   chunks.push(value);
+   received+=value.byteLength;
+   const elapsed=Math.max((performance.now()-startTime)/1000,.1);
+   const speed=received/elapsed;
+   if(total>0)dlProgress(Math.min(99,received/total*100),dlFormatBytes(received)+" / "+dlFormatBytes(total));
+   else dlProgress(Math.min(95,10+Math.log10(received+1)*20),dlFormatBytes(received)+" received");
+   $("dlProgressText").textContent=dlFormatBytes(received)+" · "+dlFormatBytes(speed)+"/s";
+  }
+  if(received===0)throw new Error("The server returned an empty file.");
+  dlProgress(99,"Preparing file");
+  const blob=new Blob(chunks,{type:response.headers.get("content-type")||"application/octet-stream"});
+  const blobUrl=URL.createObjectURL(blob);
+  const anchor=document.createElement("a");
+  anchor.href=blobUrl;anchor.download=safeName;document.body.appendChild(anchor);anchor.click();anchor.remove();
+  setTimeout(()=>URL.revokeObjectURL(blobUrl),60000);
+  dlProgress(100,"File handed to browser");
+  dlLog("[DONE] "+dlFormatBytes(received)+" received.");
+  dlLog("[NOTE] Check the browser Downloads list to confirm it was saved.","dim");
+  dlStatus("COMPLETE");
+  toast("File ready in browser downloads");
+ }catch(error){
+  if(error.name==="AbortError"){
+   dlLog("[CANCELLED] Download cancelled.","warn");dlStatus("CANCELLED");dlProgress(0,"Cancelled");
+  }else{
+   dlLog("[FAILED] "+error.message,"error");dlStatus("FAILED");dlProgress(0,"Download failed");toast("Download failed: "+error.message);
+  }
+ }finally{
+  dlState.controller=null;
+  dlSetBusy(false);
+ }
+}
+async function downloadExtracted(item,platform,index){
+ if(dlState.running)return;
+ dlLog("[DOWNLOAD] Selected "+platform.toUpperCase()+" option "+(index+1)+".");
+ const isVideo=isLikelyVideo(item);
+ const isImage=isLikelyImage(item);
+ let defaultName;
+ if(isImage&&!isVideo){
+  defaultName=`${platform}-foto-${index+1}.${safeFilename(item.format||"jpg").replace(/^\./,"")}`;
+ }else if(isVideo){
+  defaultName=`${platform}-video-${index+1}.${safeFilename(item.format||"mp4").replace(/^\./,"")}`;
+ }else{
+  defaultName=`${platform}-download-${index+1}.${safeFilename(item.format||"bin").replace(/^\./,"")}`;
+ }
+ await downloadStream(item.url,item.filename||$("downloadName").value.trim()||defaultName);
 }
 document.querySelectorAll("[data-platform]").forEach(button=>button.addEventListener("click",()=>{
  if(dlState.running)return;
- dlState.platform=button.dataset.platform;clearMediaResults();
- document.querySelectorAll("[data-platform]").forEach(item=>item.classList.toggle("active",item===button));
+ dlState.platform=button.dataset.platform;
+ document.querySelectorAll("[data-platform]").forEach(item=>{
+  const active=item===button;
+  item.classList.toggle("active",active);
+  item.setAttribute("aria-pressed",String(active));
+ });
  $("dlPlatformNote").textContent=dlNotes[dlState.platform];
  const placeholders={
   direct:"https://example.com/file.mp4",
-  tiktok:"https://www.tiktok.com/@user/video/...",
-  instagram:"https://www.instagram.com/p/...",
+  tiktok:"https://www.tiktok.com/@user/video/123456789",
+  instagram:"https://www.instagram.com/reel/...",
   whatsapp:"https://wa.me/6281234567890"
  };
  $("downloadUrl").placeholder=placeholders[dlState.platform];
+ $("downloadButton").textContent=dlState.platform==="direct"?"Start download":dlState.platform==="whatsapp"?"Open WhatsApp":"Extract media";
+ $("previewButton").textContent=dlState.platform==="direct"?"Preview URL":"Preview / Extract";
  dlLog("[SOURCE] Selected: "+dlState.platform.toUpperCase(),"dim");
 }));
 $("dlResetButton").addEventListener("click",()=>{
  if(dlState.running)return;
- clearMediaResults();dlClear();dlProgress(0,"Waiting for task");dlStatus("READY");
+ $("previewResult").classList.add("hidden");
+ dlClear();dlProgress(0,"Waiting for task");dlStatus("READY");
 });
-function isValidMediaURL(value){
- try{const u=new URL(value);return ["http:","https:"].includes(u.protocol)}catch{return false}
-}
-function normalizeMedia(item,index,platform){
- if(typeof item==="string")item={url:item};
- item=item||{};
- const url=item.url||item.downloadUrl||item.download_url||item.src||item.video_url||item.image_url||item.play||item.hdplay||item.wmplay||"";
- const typeText=String(item.type||item.mediaType||item.media_type||item.mime_type||"").toLowerCase();
- const isPhoto=/(photo|image|picture|jpg|jpeg|png|webp)/i.test(typeText)||!!(item.image_url||item.images||item.image);
- const isVideo=/(video|mp4|mov|webm)/i.test(typeText)||!!(item.video_url||item.play||item.hdplay||item.wmplay);
- let type=isPhoto?"photo":isVideo?"video":"unknown";
- if(type==="unknown"){
-  if(/\.(png|jpe?g|webp|gif)(?:[?#]|$)/i.test(url))type="photo";
-  else if(/\.(mp4|mov|webm|m3u8)(?:[?#]|$)/i.test(url))type="video";
- }
- const images=Array.isArray(item.images)?item.images:Array.isArray(item.photos)?item.photos:[];
- return {
-  ...item,index,type,url:String(url||""),
-  thumbnail:item.thumbnail||item.cover||item.cover_url||item.thumb||item.image||"",
-  title:item.title||item.desc||item.description||"",
-  filename:safeFilename(item.filename||item.fileName||item.name||`${platform}-${type==="photo"?"foto-"+(index+1):"video-"+(index+1)}.${type==="photo"?"jpg":"mp4"}`),
-  quality:item.quality||item.label||item.resolution||item.size||"",
-  images
- };
-}
-function getMediaArray(data){
- if(Array.isArray(data))return data;
- const candidates=[
-  data?.downloads,data?.data?.downloads,data?.data?.medias,
-  data?.medias,data?.media,data?.data?.media,data?.results,
-  data?.data?.results,data?.data?.items,data?.items
- ];
- for(const value of candidates)if(Array.isArray(value))return value;
- const nested=data?.data;
- if(nested&&typeof nested==="object"){
-  const single=normalizeMedia(nested,0,dlState.platform);
-  if(single.url)return [single];
- }
- if(data&&typeof data==="object"){
-  const single=normalizeMedia(data,0,dlState.platform);
-  if(single.url)return [single];
- }
- return [];
-}
-function flattenMedia(items){
- const output=[];
- for(const item of items){
-  const nestedImages=item.images||item.photos;
-  if(Array.isArray(nestedImages)&&nestedImages.length){
-   nestedImages.forEach((image,index)=>{
-    const normalized=normalizeMedia(typeof image==="string"?{url:image,type:"photo"}: {...image,type:image.type||"photo"},output.length,dlState.platform);
-    if(normalized.url&&isValidMediaURL(normalized.url))output.push(normalized);
-   });
-   continue;
+async function previewCurrentSource(){
+ try{
+  if(dlState.platform==="whatsapp"){
+   openWhatsAppURL($("downloadUrl").value.trim());
+   dlLog("[OPEN] WhatsApp link opened.");
+   dlStatus("OPENED");
+   return;
   }
-  const normalized=normalizeMedia(item,output.length,dlState.platform);
-  if(normalized.url&&isValidMediaURL(normalized.url))output.push(normalized);
- }
- return output;
-}
-function mediaDownloadURL(media){
- const filename=safeFilename(media.filename||`aspirant-${media.type}-${media.index+1}`);
- return "/api/download?url="+encodeURIComponent(media.url)+"&name="+encodeURIComponent(filename);
-}
-function saveMedia(media){
- if(!media?.url){toast("Media URL is not available");return}
- const url=mediaDownloadURL(media);
- const anchor=document.createElement("a");
- anchor.href=url;anchor.download=safeFilename(media.filename||`aspirant-${media.index+1}`);
- anchor.rel="noopener";document.body.appendChild(anchor);anchor.click();anchor.remove();
- dlLog("[DOWNLOAD] "+(media.filename||"Media "+(media.index+1)),"line");
- toast("Download dimulai: "+(media.filename||"media"));
-}
-function makeButton(label,action,primary=false){
- const button=document.createElement("button");button.type="button";
- button.className="button"+(primary?" primary":"");button.textContent=label;
- button.addEventListener("click",action);return button;
-}
-function renderPhotoCarousel(photos){
- const wrap=document.createElement("div");
- const heading=document.createElement("div");heading.className="media-heading";
- const title=document.createElement("h3");title.textContent="Foto carousel";
- const count=document.createElement("span");count.className="tag";
- count.textContent=photos.length+" foto";
- heading.append(title,count);wrap.appendChild(heading);
- const carousel=document.createElement("div");carousel.className="media-carousel";
- const stage=document.createElement("div");stage.className="media-stage";
- const img=document.createElement("img");img.alt="Foto carousel";img.draggable=false;
- const prev=document.createElement("button");prev.className="carousel-arrow prev";prev.type="button";prev.textContent="‹";prev.setAttribute("aria-label","Foto sebelumnya");
- const next=document.createElement("button");next.className="carousel-arrow next";next.type="button";next.textContent="›";next.setAttribute("aria-label","Foto berikutnya");
- stage.appendChild(img);carousel.append(stage,prev,next);
- const footer=document.createElement("div");footer.className="carousel-footer";
- const label=document.createElement("span");
- const downloadCurrent=makeButton("Download foto ini",()=>saveMedia(photos[dlState.photoIndex]),true);
- footer.append(label,downloadCurrent);carousel.appendChild(footer);
- wrap.appendChild(carousel);
- const selector=document.createElement("div");selector.className="photo-selector";
- const buttons=[];
- function showPhoto(index){
-  dlState.photoIndex=(index+photos.length)%photos.length;
-  const media=photos[dlState.photoIndex];
-  img.src=media.url;img.alt=media.title||`Foto ${dlState.photoIndex+1}`;
-  label.textContent=`Foto ${dlState.photoIndex+1} dari ${photos.length}`;
-  downloadCurrent.textContent=`Download Foto ${dlState.photoIndex+1}`;
-  buttons.forEach((button,i)=>button.classList.toggle("active",i===dlState.photoIndex));
- }
- photos.forEach((photo,index)=>{
-  const button=document.createElement("button");button.type="button";button.className="photo-option";
-  const thumb=document.createElement("img");thumb.loading="lazy";thumb.src=photo.thumbnail||photo.url;thumb.alt=`Foto ${index+1}`;
-  const name=document.createElement("strong");name.textContent=`Foto ${index+1}`;
-  const download=makeButton("Download",event=>{event.stopPropagation();saveMedia(photo)});
-  button.append(thumb,name,download);
-  button.addEventListener("click",event=>{if(event.target===download)return;showPhoto(index)});
-  buttons.push(button);selector.appendChild(button);
- });
- prev.addEventListener("click",()=>showPhoto(dlState.photoIndex-1));
- next.addEventListener("click",()=>showPhoto(dlState.photoIndex+1));
- carousel.addEventListener("touchstart",event=>{dlState.touchStartX=event.changedTouches[0].clientX},{passive:true});
- carousel.addEventListener("touchend",event=>{
-  const delta=event.changedTouches[0].clientX-dlState.touchStartX;
-  if(Math.abs(delta)>45)showPhoto(dlState.photoIndex+(delta<0?1:-1));
- },{passive:true});
- wrap.appendChild(selector);showPhoto(0);return wrap;
-}
-function renderVideo(media,container){
- const card=document.createElement("div");card.className="media-card";
- const title=document.createElement("div");title.className="media-card-title";
- const heading=document.createElement("strong");heading.textContent=media.title||`Video ${media.index+1}`;
- const tag=document.createElement("span");tag.className="tag";tag.textContent=media.quality||"VIDEO";
- title.append(heading,tag);
- const video=document.createElement("video");
- video.src=media.url;video.controls=true;video.autoplay=true;video.muted=true;video.playsInline=true;
- video.preload="auto";video.setAttribute("playsinline","");video.setAttribute("webkit-playsinline","");
- video.addEventListener("canplay",()=>{video.play().catch(()=>{dlLog("[INFO] Tap Play if autoplay is blocked by the browser.","warn")})},{once:true});
- video.addEventListener("error",()=>dlLog("[WARN] Video preview failed. You can still try downloading it.","warn"));
- const actions=document.createElement("div");actions.className="actions";
- actions.appendChild(makeButton("Download video",()=>saveMedia(media),true));
- actions.appendChild(makeButton("Open video",()=>window.open(media.url,"_blank","noopener,noreferrer")));
- card.append(title,video,actions);container.appendChild(card);
- video.play().catch(()=>{});
-}
-function renderSinglePhoto(media,container){
- const card=document.createElement("div");card.className="media-card";
- const title=document.createElement("div");title.className="media-card-title";
- const heading=document.createElement("strong");heading.textContent=media.title||`Foto ${media.index+1}`;
- const tag=document.createElement("span");tag.className="tag";tag.textContent=media.quality||"FOTO";
- title.append(heading,tag);
- const img=document.createElement("img");img.loading="lazy";img.src=media.url;img.alt=media.title||`Foto ${media.index+1}`;
- const actions=document.createElement("div");actions.className="actions";
- actions.appendChild(makeButton(`Download Foto ${media.index+1}`,()=>saveMedia(media),true));
- actions.appendChild(makeButton("Open foto",()=>window.open(media.url,"_blank","noopener,noreferrer")));
- card.append(title,img,actions);container.appendChild(card);
-}
-function renderExtractedMedia(data){
- const all=flattenMedia(getMediaArray(data));
- if(!all.length){
-  const message=document.createElement("div");message.className="empty";
-  message.textContent=data?.message||data?.error||"Extractor tidak mengembalikan URL media yang dapat digunakan.";
-  $("previewResult").appendChild(message);return;
- }
- dlState.media=all;
- const photos=all.filter(media=>media.type==="photo");
- const videos=all.filter(media=>media.type==="video");
- const unknown=all.filter(media=>media.type==="unknown");
- const heading=document.createElement("div");heading.className="media-heading";
- const title=document.createElement("h2");title.textContent=data?.title||data?.desc||"Hasil ekstraksi";
- const count=document.createElement("span");count.className="tag";count.textContent=`${all.length} media`;
- heading.append(title,count);$("previewResult").appendChild(heading);
- if(data?.thumbnail||data?.cover){
-  const cover=document.createElement("p");cover.className="media-summary";cover.textContent="Media ditemukan. Pilih foto atau video untuk melihat dan mengunduh.";
-  $("previewResult").appendChild(cover);
- }
- if(photos.length){
-  $("previewResult").appendChild(renderPhotoCarousel(photos));
- }
- const videoContainer=document.createElement("div");videoContainer.className="media-results";
- videos.forEach(media=>renderVideo(media,videoContainer));
- if(videos.length){
-  const videoHeading=document.createElement("h3");videoHeading.style.marginTop="18px";videoHeading.textContent="Video";
-  $("previewResult").append(videoHeading,videoContainer);
- }
- if(unknown.length){
-  const unknownHeading=document.createElement("h3");unknownHeading.style.marginTop="18px";unknownHeading.textContent="Media lainnya";
-  $("previewResult").appendChild(unknownHeading);
-  const list=document.createElement("div");list.className="list";
-  unknown.forEach(media=>{
-   const item=document.createElement("div");item.className="history-item";
-   const meta=document.createElement("div");meta.className="meta";
-   const name=document.createElement("strong");name.textContent=media.filename||`Media ${media.index+1}`;
-   const url=document.createElement("small");url.textContent=media.url;
-   meta.append(name,url);
-   item.append(meta,makeButton("Download",()=>saveMedia(media),true));list.appendChild(item);
-  });
-  $("previewResult").appendChild(list);
+  if(dlState.platform==="tiktok"||dlState.platform==="instagram"){
+   dlSetBusy(true);
+   $("previewResult").classList.add("hidden");
+   dlProgress(0,"Starting extraction");
+   await extractPlatform(dlState.platform);
+   return;
+  }
+  const url=getDownloadURL();
+  $("previewResult").replaceChildren();
+  $("previewResult").classList.remove("hidden");
+  const field=document.createElement("div");
+  field.className="field";
+  const label=document.createElement("label");
+  label.textContent="Source URL";
+  const link=document.createElement("a");
+  link.href=url.href;link.target="_blank";link.rel="noopener noreferrer";link.textContent=url.href;
+  field.append(label,link);
+  $("previewResult").appendChild(field);
+
+  const isImage=/\.(png|jpe?g|gif|webp|svg)(?:$|\?)/i.test(url.href);
+  const isVideo=/\.(mp4|webm|ogg|mov)(?:$|\?)/i.test(url.href);
+
+  if(isImage||isVideo){
+   const gallery=buildMediaGallery([{url:url.href,quality:isVideo?"Video":"Foto",format:isVideo?"mp4":"jpg"}]);
+   $("previewResult").appendChild(gallery);
+  }else{
+   const info=document.createElement("p");
+   info.textContent="Preview depends on browser support and the remote server.";
+   $("previewResult").appendChild(info);
+  }
+  dlLog("[VALID] URL format accepted.");
+  dlLog("[PREVIEW] Browser preview requested.","dim");
+  dlStatus("PREVIEW");
+ }catch(error){
+  dlLog("[ERROR] "+error.message,"error");
+  dlStatus("ERROR");
+  toast(error.message);
+ }finally{
+  dlSetBusy(false);
  }
 }
-async function extractPlatformMedia(){
- const platform=dlState.platform;
- if(!["tiktok","instagram"].includes(platform))throw new Error("Platform extractor is not selected.");
- const url=getDownloadURL();
- dlLog(`[EXTRACT] Starting ${platform.toUpperCase()} extraction.`);
- dlLog("[URL] "+url.href,"dim");dlProgress(8,"Connecting to extractor");dlStatus("EXTRACTING");
- const data=await request("/api/extract",{
-  method:"POST",headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({url:url.href,platform})
- });
- if(data.ok===false||data.success===false)throw new Error(data.error||data.message||"Extraction failed.");
- $("preview
+$("previewButton").addEventListener("click",previewCurrentSource);
+$("downloadButton").addEventListener("click",async()=>{
+ if(dlState.running)return;
+ if(dlState.platform==="whatsapp"){
+  try{
+   openWhatsAppURL($("downloadUrl").value.trim());
+   dlLog("[OPEN] WhatsApp opened. This is not a media download.","warn");
+   dlStatus("OPENED");
+  }catch(error){
+   toast(error.message);dlLog("[ERROR] "+error.message,"error");dlStatus("ERROR");
+  }
+  return;
+ }
+ if(dlState.platform==="tiktok"||dlState.platform==="instagram"){
+  dlSetBusy(true);
+  $("previewResult").classList.add("hidden");
+  dlProgress(0,"Starting extraction");
+  try{await extractPlatform(dlState.platform)}
+  catch(error){
+   dlLog("[FAILED] "+error.message,"error");
+   dlStatus("FAILED");dlProgress(0,"Extraction failed");toast(error.message);
+  }finally{dlSetBusy(false)}
+  return;
+ }
+ let url;
+ try{url=getDownloadURL()}
+ catch(error){toast(error.message);dlLog("[ERROR] "+error.message,"error");dlStatus("ERROR");return}
+ $("previewResult").classList.add("hidden");
+ dlClear();
+ dlLog("[INIT] Starting direct file download.");
+ dlLog("[URL] "+url.href,"dim");
+ await downloadStream(url.href,$("downloadName").value.trim()||url.pathname.split("/").pop()||"download");
+});
+
+/* LOCAL IMAGE EDITOR */
+const canvas=$("imageCanvas"),ctx=canvas.getContext("2d"),filterIds=["brightness","contrast","saturation","blur"];
+function renderImage(){
+ if(!state.image)return;
+ const img=state.image,swap=state.rotation%180!==0;
+ canvas.width=swap?img.naturalHeight:img.naturalWidth;
+ canvas.height=swap?img.naturalWidth:img.naturalHeight;
+ ctx.save();
+ ctx.translate(canvas.width/2,canvas.height/2);
+ ctx.rotate(state.rotation*Math.PI/180);
+ ctx.scale(state.flip?-1:1,1);
+ ctx.filter=`brightness(${$("brightness").value}%) contrast(${$("contrast").value}%) saturate(${$("saturation").value}%) blur(${$("blur").value}px)`;
+ ctx.drawImage(img,-img.naturalWidth/2,-img.naturalHeight/2);
+ ctx.restore();
+}
+$("imageFile").addEventListener("change",()=>{
+ const file=$("imageFile").files[0];
+ if(!file)return;
+ if(!file.type.startsWith("image/")){toast("Choose an image file");return}
+ if(state.originalURL)URL.revokeObjectURL(state.originalURL);
+ state.originalURL=URL.createObjectURL(file);
+ const img=new Image();
+ img.onload=()=>{
+  state.image=img;state.rotation=0;state.flip=false;
+  filterIds.forEach(id=>$(id).value=id==="blur"?0:100);
+  $("imageEditor").classList.remove("hidden");
+  renderImage();
+ };
+ img.onerror=()=>toast("Could not load this image");
+ img.src=state.originalURL;
+});
+filterIds.forEach(id=>$(id).addEventListener("input",renderImage));
+$("rotateImage").addEventListener("click",()=>{state.rotation=(state.rotation+90)%360;renderImage()});
+$("flipImage").addEventListener("click",()=>{state.flip=!state.flip;renderImage()});
+$("resetImage").addEventListener("click",()=>{
+ state.rotation=0;state.flip=false;
+ filterIds.forEach(id=>$(id).value=id==="blur"?0:100);
+ renderImage();
+});
+$("saveImage").addEventListener("click",()=>{
+ if(!state.image)return;
+ renderImage();
+ const format=$("imageFormat").value;
+ canvas.toBlob(blob=>{
+  if(!blob){toast("Could not export image");return}
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="aspirant-edited."+(format==="image/jpeg"?"jpg":format==="image/webp"?"webp":"png");
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+ },format,Number($("imageQuality").value)/100);
+});
+</script>
+</body>
+</html>
