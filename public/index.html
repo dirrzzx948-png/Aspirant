@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -127,6 +126,8 @@ footer{padding:29px 0 0;text-align:center;font-size:11px;color:#6d8d7a}
 .media-gallery-dot.active{background:var(--accent);transform:scale(1.2);box-shadow:0 0 10px #75f0c044}
 .media-gallery-dot:hover{background:#4b8067}
 .media-caption{padding:10px 12px;text-align:center;font-size:12px;color:var(--muted);border-top:1px solid #223b2d}
+.quick-card{height:100%;display:flex;align-items:center;gap:10px;text-align:left;width:100%}
+.quick-icon{width:35px;height:35px;border-radius:12px;background:#1e3a2c;color:var(--accent);display:grid;place-items:center}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 #75f0c000}50%{box-shadow:0 0 0 5px #75f0c014}}
 @keyframes pageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 @keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
@@ -162,6 +163,7 @@ footer{padding:29px 0 0;text-align:center;font-size:11px;color:#6d8d7a}
 </style>
 </head>
 <body>
+
 <div class="app">
 <aside class="sidebar">
  <div class="brand"><div class="brand-mark">A</div><div><strong>Aspirant</strong><small>Utility workspace</small></div></div>
@@ -232,9 +234,9 @@ footer{padding:29px 0 0;text-align:center;font-size:11px;color:#6d8d7a}
  <div class="tool-panel hidden" id="tool-whatsapp"><div class="card"><h2>WhatsApp Direct Chat</h2><p style="margin-bottom:15px">Open a chat using an international phone number.</p><div class="field"><label for="waPhone">Phone number</label><input id="waPhone" inputmode="tel" placeholder="081234567890"></div><div class="field"><label for="waMessage">Message (optional)</label><textarea id="waMessage" placeholder="Write a message..."></textarea></div><button class="button primary" id="waOpen">Open WhatsApp</button><p style="font-size:12px;margin-top:12px">For Indonesian numbers, 08xx is converted to 628xx. No message is sent automatically.</p></div></div>
  <div class="tool-panel hidden" id="tool-base64"><div class="card"><h2>Base64 Encoder / Decoder</h2><div class="field"><label for="baseInput">Input text</label><textarea id="baseInput"></textarea></div><div class="actions"><button class="button primary" id="baseEncode">Encode</button><button class="button" id="baseDecode">Decode</button></div><div class="field" style="margin-top:16px"><label for="baseOutput">Output</label><textarea id="baseOutput" readonly></textarea></div><button class="button" data-copy="baseOutput">Copy output</button></div></div>
  <div class="tool-panel hidden" id="tool-hash"><div class="card"><h2>SHA-256</h2><p style="margin-bottom:15px">Create a SHA-256 hash in your browser.</p><div class="field"><label for="hashInput">Text to hash</label><textarea id="hashInput"></textarea></div><button class="button primary" id="hashButton">Generate hash</button><div class="field" style="margin-top:16px"><label for="hashOutput">SHA-256 result</label><textarea id="hashOutput" readonly></textarea></div><button class="button" data-copy="hashOutput">Copy hash</button></div></div>
- <div class="tool-panel hidden" id="tool-qr"><div class="card"><h2>QR Generator</h2><p style="margin-bottom:15px">Generate a QR code using an external image service.</p><div class="field"><label for="qrInput">Text or URL</label><textarea id="qrInput"></textarea></div><button class="button primary" id="qrGenerate">Generate QR</button><div id="qrResult" class="result hidden"></div><p style="font-size:12px;margin-top:12px">The content is sent to the QR service when the image is requested. Do not enter passwords or confidential data.</p></div></div>
- <div class="tool-panel hidden" id="tool-api"><div class="card"><h2>API Tester</h2><p style="margin-bottom:15px">Send requests to public APIs from the server.</p><div class="notice">Only test APIs you are authorized to use. Server-side URL validation is important for protecting the backend.</div><div class="field"><label for="apiUrl">Request URL</label><input id="apiUrl" type="url" placeholder="https://api.example.com/data"></div><div class="row"><div class="field grow"><label for="apiMethod">Method</label><select id="apiMethod"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option><option>HEAD</option></select></div><div class="field grow"><label for="apiType">Body content type</label><select id="apiType"><option value="application/json">JSON</option><option value="text/plain">Text</option></select></div></div><div class="field"><label for="apiHeaders">Headers (JSON object)</label><textarea id="apiHeaders" placeholder='{"Accept":"application/json"}'></textarea></div><div class="field"><label for="apiBody">Request body</label><textarea id="apiBody"></textarea></div><button class="button primary" id="apiSend">Send request</button><div id="apiResult" class="result hidden"></div></div></div>
- <div class="tool-panel hidden" id="tool-image"><div class="card"><h2>Image Tools</h2><p style="margin-bottom:15px">Edit an image locally in your browser and export the result.</p><div class="field"><label for="imageFile">Choose image</label><input id="imageFile" type="file" accept="image/*"></div><div id="imageEditor" class="hidden"><div class="result" style="text-align:center"><canvas id="imageCanvas" style="max-width:100%;height:auto"></canvas></div><div class="grid" style="margin-top:14px"><div class="span-6 field"><label for="brightness">Brightness</label><input id="brightness" type="range" min="50" max="150" value="100"></div><div class="span-6 field"><label for="contrast">Contrast</label><input id="contrast" type="range" min="50" max="150" value="100"></div><div class="span-6 field"><label for="saturation">Saturation</label><input id="saturation" type="range" min="0" max="200" value="100"></div><div class="span-6 field"><label for="blur">Blur</label><input id="blur" type="range" min="0" max="5" value="0" step=".5"></div></div><div class="actions"><button class="button" id="rotateImage">Rotate 90°</button><button class="button" id="flipImage">Flip horizontal</button><button class="button" id="resetImage">Reset</button></div><div class="row" style="margin-top:15px"><div class="field grow"><label for="imageFormat">Export format</label><select id="imageFormat"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></div><div class="field grow"><label for="imageQuality">Quality (JPG/WebP)</label><input id="imageQuality" type="range" min="40" max="100" value="90"></div></div><button class="button primary" id="saveImage">Export image</button></div><p style="font-size:12px;margin-top:12px">Basic local editing only. AI background removal, upscaling, object removal, and generative fill are not included.</p></div></div>
+ <div class="tool-panel hidden" id="tool-qr"><div class="card"><h2>QR Generator</h2><p style="margin-bottom:15px">Generate a QR code using an external image service.</p><div class="field"><label for="qrInput">Text or URL</label><textarea id="qrInput"></textarea></div><button class="button primary" id="qrGenerate">Generate QR</button><div id="qrResult" class="result hidden"></div><p style="font-size:12px;margin-top:12px">Do not enter passwords or confidential data.</p></div></div>
+ <div class="tool-panel hidden" id="tool-api"><div class="card"><h2>API Tester</h2><p style="margin-bottom:15px">Send requests to public APIs from the server.</p><div class="notice">Only test APIs you are authorized to use.</div><div class="field"><label for="apiUrl">Request URL</label><input id="apiUrl" type="url" placeholder="https://api.example.com/data"></div><div class="row"><div class="field grow"><label for="apiMethod">Method</label><select id="apiMethod"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option><option>HEAD</option></select></div><div class="field grow"><label for="apiType">Body content type</label><select id="apiType"><option value="application/json">JSON</option><option value="text/plain">Text</option></select></div></div><div class="field"><label for="apiHeaders">Headers (JSON object)</label><textarea id="apiHeaders" placeholder='{"Accept":"application/json"}'></textarea></div><div class="field"><label for="apiBody">Request body</label><textarea id="apiBody"></textarea></div><button class="button primary" id="apiSend">Send request</button><div id="apiResult" class="result hidden"></div></div></div>
+ <div class="tool-panel hidden" id="tool-image"><div class="card"><h2>Image Tools</h2><p style="margin-bottom:15px">Edit an image locally in your browser and export the result.</p><div class="field"><label for="imageFile">Choose image</label><input id="imageFile" type="file" accept="image/*"></div><div id="imageEditor" class="hidden"><div class="result" style="text-align:center"><canvas id="imageCanvas" style="max-width:100%;height:auto"></canvas></div><div class="grid" style="margin-top:14px"><div class="span-6 field"><label for="brightness">Brightness</label><input id="brightness" type="range" min="50" max="150" value="100"></div><div class="span-6 field"><label for="contrast">Contrast</label><input id="contrast" type="range" min="50" max="150" value="100"></div><div class="span-6 field"><label for="saturation">Saturation</label><input id="saturation" type="range" min="0" max="200" value="100"></div><div class="span-6 field"><label for="blur">Blur</label><input id="blur" type="range" min="0" max="5" value="0" step=".5"></div></div><div class="actions"><button class="button" id="rotateImage">Rotate 90°</button><button class="button" id="flipImage">Flip horizontal</button><button class="button" id="resetImage">Reset</button></div><div class="row" style="margin-top:15px"><div class="field grow"><label for="imageFormat">Export format</label><select id="imageFormat"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></div><div class="field grow"><label for="imageQuality">Quality (JPG/WebP)</label><input id="imageQuality" type="range" min="40" max="100" value="90"></div></div><button class="button primary" id="saveImage">Export image</button></div><p style="font-size:12px;margin-top:12px">Basic local editing only.</p></div></div>
 </section>
 <footer>Aspirant · Lightweight utility workspace</footer>
 </main>
@@ -377,9 +379,9 @@ function downloadBlob(content,name,type){
  a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
-/* ASPIRANT DOWNLOADER */
+/* ===================== ASPIRANT DOWNLOADER ===================== */
 function safeFilename(value){
- return String(value||"download").split(/[?#]/)[0].split(/[\\/]/).pop().replace(/[^\w.-]+/g,"_").slice(0,120)||"download";
+ return String(value||"download").split(/[?#]/)[0].split(/[\/]/).pop().replace(/[^\w.-]+/g,"_").slice(0,120)||"download";
 }
 const dlState={platform:"direct",running:false,controller:null,typing:false};
 const dlNotes={
@@ -441,85 +443,106 @@ function openWhatsAppURL(value){
  if(url.protocol!=="https:"||!/(^|\.)wa\.me$|(^|\.)whatsapp\.com$/i.test(url.hostname))throw new Error("Use an official WhatsApp URL.");
  window.open(url.href,"_blank","noopener,noreferrer");
 }
-
-/* Normalisasi respons extractor: dukung format TikTok/Instagram yang umum. */
-function normaliseExtraction(raw){
+function pickURL(item){
+ if(typeof item==="string")return item;
+ if(!item||typeof item!=="object")return "";
+ return item.url||item.downloadUrl||item.download_url||item.src||item.link||item.file_url||item.fileUrl
+  ||item.play||item.wmplay||item.nowm||item.hdplay||item.nwm_video_url||item.nwm_video_url_HQ
+  ||item.image_url||item.display_url||item.video_url||item.media_url||item.mediaUrl
+  ||item.no_watermark||item.noWatermark||item.watermark||"";
+}
+function normaliseExtraction(raw,platform){
  if(!raw||typeof raw!=="object")throw new Error("The extractor returned an invalid response.");
  const nested=raw.data&&typeof raw.data==="object"&&!Array.isArray(raw.data)?raw.data:{};
  const merged={...raw,...nested};
- if(raw.success===false||raw.ok===false||(raw.code!==undefined&&raw.code!==0&&raw.code!=="0"&&!merged.downloads&&!merged.medias)){
+ if(raw.success===false||raw.ok===false||(raw.code!==undefined&&raw.code!==0&&raw.code!=="0"&&!merged.downloads&&!merged.medias&&!merged.images)){
   throw new Error(raw.error||raw.message||raw.msg||"The extractor could not process this URL.");
  }
- let entries=merged.downloads||merged.medias||merged.formats||merged.links||merged.results||merged.images||merged.image_urls||merged.photo||[];
- if(!Array.isArray(entries))entries=[entries];
- if(!entries.length&&Array.isArray(merged.data))entries=merged.data;
- const pickURL=item=>{
-  if(typeof item==="string")return item;
-  if(!item||typeof item!=="object")return "";
-  return item.url||item.downloadUrl||item.download_url||item.src||item.link||item.file_url||item.fileUrl||item.play||item.wmplay||item.nowm||item.hdplay||item.image_url||item.display_url||item.video_url||"";
+ let entries=[];
+ const pushEntry=(entry,forceType)=>{
+  if(entry==null)return;
+  if(typeof entry==="string"){entries.push({url:entry,type:forceType||""});return}
+  if(typeof entry!=="object")return;
+  const copy={...entry};if(forceType&&!copy.type)copy.type=forceType;entries.push(copy);
  };
- if(!entries.length){
-  const one=pickURL(merged);
-  if(one)entries=[{url:one,type:merged.type||merged.media_type||merged.mime_type||"",quality:merged.quality||"Media"}];
- }
- // Beberapa extractor mengembalikan daftar foto terpisah dari daftar video.
- if(Array.isArray(merged.images)&&merged.images.length){
-  for(const image of merged.images)entries.push(typeof image==="string"?{url:image,type:"image"}:{...image,type:image.type||"image"});
- }
+ [merged.downloads,merged.medias,merged.formats,merged.links,merged.results,merged.images,merged.image_urls,merged.photos,merged.photo,merged.carousel_media,merged.media,Array.isArray(merged.data)?merged.data:null].forEach(list=>{
+  if(!list)return;if(Array.isArray(list))list.forEach(x=>pushEntry(x));else pushEntry(list);
+ });
+ ["play","wmplay","hdplay","nowm","nwm_video_url","nwm_video_url_HQ","video","video_url","playAddr"].forEach(key=>{
+  if(typeof merged[key]==="string"&&merged[key])pushEntry({url:merged[key],type:"video",quality:key},"video");
+ });
+ ["image","image_url","display_url","thumbnail","cover","origin_cover"].forEach(key=>{
+  if(typeof merged[key]==="string"&&merged[key])pushEntry({url:merged[key],type:"image",quality:key},"image");
+ });
+ if(Array.isArray(merged.images))merged.images.forEach(x=>pushEntry(x,"image"));
+ if(Array.isArray(merged.image_urls))merged.image_urls.forEach(x=>pushEntry(x,"image"));
+ if(!entries.length){const one=pickURL(merged);if(one)entries=[{url:one,type:merged.type||merged.media_type||""}]}
  const clean=entries.map((entry,index)=>{
   const item=typeof entry==="string"?{url:entry}:entry;
   if(!item||typeof item!=="object")return null;
   const url=pickURL(item);if(!url)return null;
-  try{const parsed=new URL(url);if(!["http:","https:"].includes(parsed.protocol))return null}catch{return null}
+  try{const p=new URL(url);if(!["http:","https:"].includes(p.protocol))return null}catch{return null}
   return {
-   url,
-   type:item.type||item.media_type||item.mime_type||item.mimeType||"",
+   url,type:item.type||item.media_type||item.mediaType||item.mime_type||item.mimeType||"",
    quality:item.quality||item.label||item.resolution||item.format||item.type||`Option ${index+1}`,
-   format:item.extension||item.ext||item.format||"",
-   filename:item.filename||item.file_name||item.name||"",
-   size:item.size||item.filesize||item.file_size||"",
-   mime:item.mime_type||item.mimeType||"",
+   format:item.extension||item.ext||item.format||"",filename:item.filename||item.file_name||item.name||"",
+   size:item.size||item.filesize||item.file_size||"",mime:item.mime_type||item.mimeType||"",
    thumbnail:item.thumbnail||item.thumbnail_url||item.cover||item.cover_url||item.thumb||"",
-   original:item
+   platform:platform||"",original:item
   };
  }).filter(Boolean);
- // Gabungkan URL duplikat, tetapi tetap pertahankan opsi berbeda jika query URL berbeda.
- const seen=new Set(),unique=clean.filter(item=>{if(seen.has(item.url))return false;seen.add(item.url);return true});
+ const seen=new Set(),unique=clean.filter(i=>{if(seen.has(i.url))return false;seen.add(i.url);return true});
  return {
   title:merged.title||merged.desc||merged.description||merged.caption||merged.author?.nickname||"Media extraction",
   description:merged.description||merged.caption||merged.desc||"",
   author:merged.author?.nickname||merged.author?.name||merged.author?.unique_id||merged.username||merged.owner||"",
   thumbnail:merged.thumbnail||merged.thumbnail_url||merged.cover||merged.cover_url||merged.origin_cover||"",
-  duration:merged.duration||"",
-  downloads:unique,
-  raw:merged
+  duration:merged.duration||"",platform:platform||"",downloads:unique,raw:merged
  };
 }
 
-/* Kenali gambar/video dari ekstensi, MIME, field type, dan metadata. */
-function mediaKind(item){
+/* DETEKSI FOTO vs VIDEO — CDN IG/TikTok tanpa ekstensi */
+function mediaKind(item,platform){
  if(!item)return "unknown";
- const url=String(item.url||"").toLowerCase().split("#")[0].split("?")[0];
- const meta=[item.type,item.mime,item.format,item.quality,item.filename,item.extension].map(v=>String(v||"").toLowerCase()).join(" ");
- if(/\.(jpe?g|png|webp|gif|heic|bmp|avif)(?:$)/i.test(url)||/\b(image\/|jpeg|jpg|png|webp|gif|heic|photo|picture|image)\b/.test(meta))return "image";
- if(/\.(mp4|webm|mov|m4v|ogg|mkv|m3u8)(?:$)/i.test(url)||/\b(video\/|video|mp4|webm|mov|m4v|m3u8)\b/.test(meta))return "video";
- if(/\b(photo|image|carousel|slide|picture|jpg|jpeg|png)\b/.test(meta))return "image";
- if(/\b(video|hdplay|wmplay|nowm|no.?watermark|watermark|720p|1080p|480p|360p)\b/.test(meta))return "video";
+ const urlRaw=String(item.url||"");
+ const url=urlRaw.toLowerCase();
+ const path=url.split("#")[0].split("?")[0];
+ let host="";try{host=new URL(urlRaw).hostname.toLowerCase()}catch{}
+ const meta=[item.type,item.mime,item.format,item.quality,item.filename,item.extension,item.platform]
+  .map(v=>String(v||"").toLowerCase()).join(" ");
+ if(/\b(image\/|image|photo|picture|carousel|sidecar|graphimage|jpg|jpeg|png|webp|gif|heic|bmp|avif)\b/.test(meta))return "image";
+ if(/\.(jpe?g|png|webp|gif|heic|bmp|avif)(?:$)/i.test(path))return "image";
+ if(/[?&]format=(jpe?g|png|webp)/i.test(url))return "image";
+ if(/(cdninstagram|fbcdn\.net|scontent)/i.test(url)&&!/\.(mp4|mov|m4v|webm)/i.test(path)){
+  if(!/\b(video|mp4|reel)\b/.test(meta))return "image";
+ }
+ if(/\b(video\/|video|mp4|webm|mov|m4v|m3u8|graphvideo|reel|hdplay|wmplay|nowm|playaddr)\b/.test(meta))return "video";
+ if(/\.(mp4|webm|mov|m4v|ogg|mkv|m3u8)(?:$)/i.test(path))return "video";
+ if(/tiktokcdn|tiktokv\.|musical\.ly|v[0-9]+-webapp|v[0-9]+-core/i.test(host))return "video";
+ const plat=(platform||item.platform||dlState.platform||"").toLowerCase();
+ if(plat==="tiktok")return "video";
+ if(plat==="instagram")return "image";
  return "unknown";
 }
-function resolveKinds(items){
- const counts={image:0,video:0,unknown:0};
- items.forEach(i=>counts[mediaKind(i)]++);
- return items.map(i=>{
-  let kind=mediaKind(i);
-  if(kind==="unknown"){
-   if(counts.image&& !counts.video)kind="image";
-   else if(counts.video&&!counts.image)kind="video";
-  }
-  return {...i,resolvedKind:kind};
- });
+function resolveKinds(items,platform){
+ let resolved=items.map(i=>({...i,resolvedKind:mediaKind(i,platform)}));
+ const images=resolved.filter(i=>i.resolvedKind==="image").length;
+ const videos=resolved.filter(i=>i.resolvedKind==="video").length;
+ const unknowns=resolved.filter(i=>i.resolvedKind==="unknown");
+ if(unknowns.length){
+  const plat=(platform||dlState.platform||"").toLowerCase();
+  let fallback="unknown";
+  if(plat==="tiktok")fallback="video";
+  else if(plat==="instagram")fallback=videos&&!images?"video":"image";
+  else if(images&&!videos)fallback="image";
+  else if(videos&&!images)fallback="video";
+  else if(resolved.length>1)fallback="image";
+  else fallback="video";
+  resolved=resolved.map(i=>i.resolvedKind==="unknown"?{...i,resolvedKind:fallback}:i);
+ }
+ return resolved;
 }
-function itemKind(item){return item.resolvedKind||mediaKind(item)}
+function itemKind(item){return item.resolvedKind||mediaKind(item,item.platform)}
 
 async function extractPlatform(platform){
  const url=getDownloadURL();
@@ -528,9 +551,9 @@ async function extractPlatform(platform){
  dlLog("[URL] "+url.href,"dim");dlProgress(12,"Connecting to extractor");dlStatus("EXTRACTING");
  const raw=await request("/api/extract",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:url.href,platform})});
  dlProgress(55,"Parsing media payload");
- const data=normaliseExtraction(raw);
- if(!data.downloads.length)throw new Error("Extractor tidak mengembalikan URL media yang bisa digunakan. Periksa format respons /api/extract di backend.");
- data.downloads=resolveKinds(data.downloads);
+ const data=normaliseExtraction(raw,platform);
+ if(!data.downloads.length)throw new Error("Extractor tidak mengembalikan URL media. Periksa format respons /api/extract.");
+ data.downloads=resolveKinds(data.downloads,platform);
  const photos=data.downloads.filter(i=>itemKind(i)==="image").length;
  const videos=data.downloads.filter(i=>itemKind(i)==="video").length;
  await dlType("[DETECT] "+photos+" foto · "+videos+" video");
@@ -540,7 +563,6 @@ async function extractPlatform(platform){
  return data;
 }
 
-/* Galeri satu media per slide. Swipe kiri/kanan, navigasi, dan autoplay video. */
 function buildMediaGallery(items){
  const gallery=document.createElement("div");gallery.className="media-gallery";
  const viewport=document.createElement("div");viewport.className="media-gallery-viewport";
@@ -554,21 +576,31 @@ function buildMediaGallery(items){
    video.src=item.url;video.controls=true;video.muted=true;video.autoplay=index===0;
    video.playsInline=true;video.setAttribute("playsinline","");video.setAttribute("muted","");
    video.preload=index===0?"auto":"metadata";
-   video.setAttribute("aria-label","Video "+(index+1));
-   video.addEventListener("error",()=>{if(slide.contains(video)){const msg=document.createElement("p");msg.className="muted";msg.style.padding="22px";msg.textContent="Video tidak bisa dipreview di browser. Gunakan tombol download.";slide.replaceChildren(msg)}});
+   video.addEventListener("error",()=>{
+    if(slide.contains(video)){
+     const msg=document.createElement("p");msg.className="muted";msg.style.padding="22px";
+     msg.textContent="Video tidak bisa dipreview di browser (CORS). Pakai tombol Download.";
+     slide.replaceChildren(msg);
+    }
+   });
    slide.appendChild(video);
   }else{
    const img=document.createElement("img");
    img.src=item.url;img.alt="Foto "+(index+1);img.loading=index===0?"eager":"lazy";img.referrerPolicy="no-referrer";
-   img.onerror=()=>{if(slide.contains(img)){const msg=document.createElement("p");msg.className="muted";msg.style.padding="22px";msg.textContent="Foto tidak bisa dipreview. Gunakan tombol download Foto "+(index+1)+".";slide.replaceChildren(msg)}};
+   img.onerror=()=>{
+    if(slide.contains(img)){
+     const msg=document.createElement("p");msg.className="muted";msg.style.padding="22px";
+     msg.textContent="Foto tidak bisa dipreview. Pakai tombol Download Foto "+(index+1)+".";
+     slide.replaceChildren(msg);
+    }
+   };
    slide.appendChild(img);
   }
   viewport.appendChild(slide);slides.push(slide);
  });
  gallery.appendChild(viewport);
  if(!slides.length)return gallery;
- let current=0;
- let counter=null,prev=null,next=null,dots=null;
+ let current=0,counter=null,prev=null,next=null,dots=null;
  function goTo(index){
   if(index<0||index>=slides.length)return;
   slides.forEach((slide,i)=>{
@@ -577,12 +609,11 @@ function buildMediaGallery(items){
    slide.classList.toggle("active",i===index);
   });
   current=index;
-  if(counter)counter.textContent=`${current+1} / ${slides.length}`;
+  if(counter)counter.textContent=(current+1)+" / "+slides.length;
   if(dots)dots.querySelectorAll("button").forEach((b,i)=>b.classList.toggle("active",i===current));
   if(prev)prev.disabled=current===0;
   if(next)next.disabled=current===slides.length-1;
  }
- // Mobile autoplay sering perlu dipanggil setelah video masuk ke DOM.
  const firstVideo=slides[0].querySelector("video");
  if(firstVideo){
   const attempt=()=>firstVideo.play().catch(()=>{});
@@ -592,12 +623,18 @@ function buildMediaGallery(items){
  }
  if(slides.length>1){
   const nav=document.createElement("div");nav.className="media-gallery-nav";
-  prev=document.createElement("button");prev.type="button";prev.className="button";prev.textContent="‹";prev.setAttribute("aria-label","Foto/video sebelumnya");prev.onclick=()=>goTo(current-1);
-  counter=document.createElement("span");counter.className="media-gallery-counter";counter.textContent=`1 / ${slides.length}`;
-  next=document.createElement("button");next.type="button";next.className="button";next.textContent="›";next.setAttribute("aria-label","Foto/video berikutnya");next.onclick=()=>goTo(current+1);
+  prev=document.createElement("button");prev.type="button";prev.className="button";prev.textContent="‹";
+  prev.setAttribute("aria-label","Sebelumnya");prev.onclick=()=>goTo(current-1);
+  counter=document.createElement("span");counter.className="media-gallery-counter";counter.textContent="1 / "+slides.length;
+  next=document.createElement("button");next.type="button";next.className="button";next.textContent="›";
+  next.setAttribute("aria-label","Berikutnya");next.onclick=()=>goTo(current+1);
   nav.append(prev,counter,next);gallery.appendChild(nav);
   dots=document.createElement("div");dots.className="media-gallery-dots";
-  slides.forEach((_,i)=>{const dot=document.createElement("button");dot.type="button";dot.className="media-gallery-dot"+(i===0?" active":"");dot.setAttribute("aria-label","Tampilkan foto "+(i+1));dot.onclick=()=>goTo(i);dots.appendChild(dot)});
+  slides.forEach((_,i)=>{
+   const dot=document.createElement("button");dot.type="button";
+   dot.className="media-gallery-dot"+(i===0?" active":"");
+   dot.setAttribute("aria-label","Slide "+(i+1));dot.onclick=()=>goTo(i);dots.appendChild(dot);
+  });
   gallery.appendChild(dots);prev.disabled=true;
   let startX=0,startY=0;
   viewport.addEventListener("touchstart",e=>{startX=e.changedTouches[0].clientX;startY=e.changedTouches[0].clientY},{passive:true});
@@ -605,12 +642,9 @@ function buildMediaGallery(items){
    const dx=e.changedTouches[0].clientX-startX,dy=e.changedTouches[0].clientY-startY;
    if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.2)goTo(current+(dx<0?1:-1));
   },{passive:true});
-  // Mouse / trackpad horizontal scrolling also changes slide.
-  viewport.addEventListener("wheel",e=>{
-   if(Math.abs(e.deltaX)>25)goTo(current+(e.deltaX>0?1:-1));
-  },{passive:true});
  }
- const caption=document.createElement("div");caption.className="media-caption";caption.textContent=slides.length>1?"Geser foto ke kiri/kanan atau gunakan tombol navigasi.":"Preview media";
+ const caption=document.createElement("div");caption.className="media-caption";
+ caption.textContent=slides.length>1?"Geser foto · tombol ‹ › · titik di bawah":"Preview media";
  gallery.appendChild(caption);
  return gallery;
 }
@@ -625,23 +659,21 @@ function renderExtractionResults(data,platform){
  const meta=document.createElement("p");meta.style.fontSize="12px";
  meta.textContent=[data.author?"By "+data.author:"",data.duration?"Duration: "+data.duration:""].filter(Boolean).join(" · ")||"Available media links";
  root.appendChild(meta);
-
- // Gunakan hanya media hasil ekstraksi yang valid. Thumbnail bukan pengganti foto asli.
  const galleryItems=data.downloads.filter(i=>itemKind(i)==="image"||itemKind(i)==="video");
  if(galleryItems.length)root.appendChild(buildMediaGallery(galleryItems));
-
  const list=document.createElement("div");list.className="extract-downloads";
  let photoIndex=0,videoIndex=0;
  data.downloads.forEach((item,index)=>{
-  const kind=itemKind(item);let label,buttonText;
+  const kind=itemKind(item);
+  let label,buttonText;
   if(kind==="image"){photoIndex++;label="Foto "+photoIndex;buttonText="Download Foto "+photoIndex}
   else if(kind==="video"){videoIndex++;label=videoIndex===1?"Video":"Video "+videoIndex;buttonText="Download "+label}
-  else{label="Media "+(index+1);buttonText="Download Media "+(index+1)}
+  else{photoIndex++;label="Foto "+photoIndex;buttonText="Download Foto "+photoIndex}
   const card=document.createElement("div");card.className="extract-download";
   const info=document.createElement("div");
   const name=document.createElement("strong");name.textContent=label;
   const details=document.createElement("small");
-  details.textContent=[item.format,item.size?String(item.size):"",item.mime,item.quality&&item.quality!==label?item.quality:""].filter(Boolean).join(" · ")||(kind==="image"?"Foto":kind==="video"?"Video":"Media");
+  details.textContent=[item.format,item.size?String(item.size):"",item.mime,item.quality&&item.quality!==label?item.quality:""].filter(Boolean).join(" · ")||(kind==="video"?"Video":"Foto");
   info.append(name,details);
   const button=document.createElement("button");button.type="button";button.className="button primary small";button.textContent=buttonText;
   button.addEventListener("click",()=>downloadExtracted(item,platform,index,label));
@@ -649,9 +681,9 @@ function renderExtractionResults(data,platform){
  });
  root.appendChild(list);
  const source=document.createElement("div");source.className="field";source.style.marginTop="15px";
- const label=document.createElement("label");label.textContent="Source URL";
+ const lab=document.createElement("label");lab.textContent="Source URL";
  const link=document.createElement("a");link.href=$("downloadUrl").value.trim();link.target="_blank";link.rel="noopener noreferrer";link.textContent=$("downloadUrl").value.trim();
- source.append(label,link);root.appendChild(source);
+ source.append(lab,link);root.appendChild(source);
 }
 
 async function downloadStream(url,filename){
@@ -695,9 +727,11 @@ async function downloadStream(url,filename){
   else{dlLog("[FAILED] "+error.message,"error");dlStatus("FAILED");dlProgress(0,"Download failed");toast("Download failed: "+error.message)}
  }finally{dlState.controller=null;dlSetBusy(false)}
 }
+
 async function downloadExtracted(item,platform,index,label){
  if(dlState.running)return;
- const kind=itemKind(item),tag=label||(kind==="image"?"Foto "+(index+1):kind==="video"?"Video":"Media "+(index+1));
+ const kind=itemKind(item);
+ const tag=label||(kind==="image"?"Foto "+(index+1):kind==="video"?"Video":"Media "+(index+1));
  dlLog("[DOWNLOAD] "+tag+" · "+platform.toUpperCase());
  let ext=String(item.format||"").replace(/^\./,"").toLowerCase();
  if(!/^[a-z0-9]{2,6}$/.test(ext))ext=kind==="image"?"jpg":kind==="video"?"mp4":"bin";
@@ -710,7 +744,7 @@ document.querySelectorAll("[data-platform]").forEach(button=>button.addEventList
  dlState.platform=button.dataset.platform;
  document.querySelectorAll("[data-platform]").forEach(b=>{const active=b===button;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active))});
  $("dlPlatformNote").textContent=dlNotes[dlState.platform];
- const placeholders={direct:"https://example.com/file.mp4",tiktok:"https://www.tiktok.com/@user/video/123456789",instagram:"https://www.instagram.com/reel/...",whatsapp:"https://wa.me/6281234567890"};
+ const placeholders={direct:"https://example.com/file.mp4",tiktok:"https://www.tiktok.com/@user/video/123456789",instagram:"https://www.instagram.com/p/...",whatsapp:"https://wa.me/6281234567890"};
  $("downloadUrl").placeholder=placeholders[dlState.platform];
  $("downloadButton").textContent=dlState.platform==="direct"?"Start download":dlState.platform==="whatsapp"?"Open WhatsApp":"Extract media";
  $("previewButton").textContent=dlState.platform==="direct"?"Preview URL":"Preview / Extract";
@@ -734,9 +768,10 @@ async function previewCurrentSource(){
   const path=url.pathname.toLowerCase(),isImage=/\.(png|jpe?g|gif|webp|svg|avif)$/i.test(path),isVideo=/\.(mp4|webm|ogg|mov|m4v)$/i.test(path);
   if(isImage||isVideo){
    await dlType("[DETECT] "+(isVideo?"video":"foto")+" · building preview");
-   const item={url:url.href,quality:isVideo?"Video":"Foto 1",format:isVideo?"mp4":"jpg",type:isVideo?"video":"image"};
-   item.resolvedKind=isVideo?"video":"image";root.appendChild(buildMediaGallery([item]));
-   const button=document.createElement("button");button.type="button";button.className="button primary";button.textContent=isImage?"Download Foto 1":"Download Video";
+   const item={url:url.href,quality:isVideo?"Video":"Foto 1",format:isVideo?"mp4":"jpg",type:isVideo?"video":"image",resolvedKind:isVideo?"video":"image"};
+   root.appendChild(buildMediaGallery([item]));
+   const button=document.createElement("button");button.type="button";button.className="button primary";button.style.marginTop="12px";
+   button.textContent=isImage?"Download Foto 1":"Download Video";
    button.addEventListener("click",()=>downloadExtracted(item,"direct",0,isImage?"Foto 1":"Video"));
    root.appendChild(button);
   }else{
