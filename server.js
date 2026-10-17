@@ -9,6 +9,12 @@ const path = require("node:path");
 const { Transform, Readable } = require("node:stream");
 const { pipeline } = require("node:stream/promises");
 
+const {
+  tiktok,
+  instagram,
+  pinterest
+} = require("@coflyn/scrapr");
+
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const PUBLIC = path.join(__dirname, "public");
@@ -39,6 +45,7 @@ function jsonError(res, status, message) {
 
 function isPrivateIPv4(ip) {
   const parts = ip.split(".").map(Number);
+
   if (parts.length !== 4 || parts.some(n => n < 0 || n > 255)) {
     return true;
   }
@@ -128,13 +135,17 @@ async function validatePublicURL(input) {
     if (isPrivateAddress(hostname)) {
       throw new Error("Alamat IP privat tidak diizinkan.");
     }
+
     return url;
   }
 
   let records;
 
   try {
-    records = await dns.lookup(hostname, { all: true, verbatim: true });
+    records = await dns.lookup(hostname, {
+      all: true,
+      verbatim: true
+    });
   } catch {
     throw new Error("Domain tidak dapat ditemukan.");
   }
@@ -152,11 +163,10 @@ async function validatePublicURL(input) {
 
 /*
  * Fetch URL publik dan validasi setiap tujuan redirect.
- * Catatan: validasi DNS ini bukan perlindungan SSRF sempurna
- * untuk server yang dibuka ke internet.
  */
 async function fetchPublic(input, options = {}) {
   let currentURL = await validatePublicURL(input);
+
   const method = options.method || "GET";
   const headers = options.headers || {};
   const body = options.body;
@@ -167,7 +177,6 @@ async function fetchPublic(input, options = {}) {
       method,
       headers,
       body,
-      signal,
       redirect: "manual",
       signal: signal || AbortSignal.timeout(REQUEST_TIMEOUT)
     });
@@ -197,7 +206,10 @@ async function fetchPublic(input, options = {}) {
 }
 
 function trimText(value, maxLength = 500) {
-  return String(value || "").replace(/\s+/g, " ").trim().slice(0, maxLength);
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, maxLength);
 }
 
 function safeFilename(value) {
@@ -222,12 +234,244 @@ function encodeDispositionFilename(filename) {
   return `attachment; filename="${fallback}"; filename*=UTF-8''${encodeURIComponent(safe)}`;
 }
 
+/* =========================================================
+   MEDIA EXTRACTOR
+   POST /api/extract
+   Body: { "url": "...", "platform": "tiktok" }
+   Platform: tiktok, instagram, pinterest
+   ========================================================= */
+
+const MEDIA_EXTRACTORS = {
+  tiktok: [
+    ["snaptik", tiktok.snaptik],
+    ["tiktokio", tiktok.tiktokio],
+    ["ssstik", tiktok.ssstik],
+    ["savetik", tiktok.savetik],
+    ["tikdownloader", tiktok.tikdownloader]
+  ],
+
+  instagram: [
+    ["direct", instagram.direct],
+    ["indown", instagram.indown],
+    ["snapsave", instagram.snapsave],
+    ["snapinsta", instagram.snapinsta]
+  ],
+
+  pinterest: [
+    ["direct", pinterest.direct],
+    ["pindown", pinterest.pindown]
+  ]
+};
+
+function detectMediaPlatform(input) {
+  let url;
+
+  try {
+    url = new URL(input);
+  } catch {
+    return null;
+  }
+
+  if (!["http:", "https:"].includes(url.protocol)) {
+    return null;
+  }
+
+  const host = url.hostname.toLowerCase().replace(/^www\./, "");
+
+  if (
+    host === "tiktok.com" ||
+    host.endsWith(".tiktok.com")
+  ) {
+    return "tiktok";
+  }
+
+  if (
+    host === "instagram.com" ||
+    host.endsWith(".instagram.com") ||
+    host === "instagr.am"
+  ) {
+    return "instagram";
+  }
+
+  if (
+    host === "pinterest.com" ||
+    host.endsWith(".pinterest.com") ||
+    host === "pin.it"
+  ) {
+    return "pinterest";
+  }
+
+  return null;
+}
+
+function normalizeMediaResult(raw, platform, method) {
+  if (!raw || raw.status !== true || !raw.result) {
+    return null;
+  }
+
+  const result = raw.result;
+
+  const downloads = Array.isArray(result.downloads)
+    ? result.downloads
+        .filter(item =>
+          item &&
+          typeof item.url === "string" &&
+          /^https?:\/\//i.test(item.url)
+        )
+        .map((item, index) => ({
+          url: item.url,
+          type: item.type || "media",
+          quality: item.quality || "Original",
+          index
+        }))
+    : [];
+
+  if (!downloads.length && typeof result.url === "string") {
+    if (/^https?:\/\//i.test(result.url)) {
+      downloads.push({
+        url: result.url,
+        type: result.type || "media",
+        quality: result.quality || "Original",
+        index: 0
+      });
+    }
+  }
+
+  if (!downloads.length) {
+    return null;
+  }
+
+  return {
+    ok: true,
+    platform,
+    extractor: method,
+    title: trimText(result.title || "Media", 300),
+    thumbnail: result.thumbnail || null,
+    type: result.type || "media",
+    downloads
+  };
+}
+
+async function extractMedia(input, requestedPlatform) {
+  const url = String(input || "").trim();
+
+  if (!url) {
+    throw new Error("URL media wajib diisi.");
+  }
+
+  let parsed;
+
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error("URL media tidak valid.");
+  }
+
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    throw new Error("Hanya URL HTTP dan HTTPS yang didukung.");
+  }
+
+  const detectedPlatform = detectMediaPlatform(url);
+
+  if (!detectedPlatform) {
+    throw new Error(
+      "Platform belum didukung. Gunakan URL TikTok, Instagram, atau Pinterest."
+    );
+  }
+
+  const platform = String(
+    requestedPlatform || detectedPlatform
+  ).toLowerCase();
+
+  if (!MEDIA_EXTRACTORS[platform]) {
+    throw new Error("Platform tidak didukung.");
+  }
+
+  if (platform !== detectedPlatform) {
+    throw new Error(
+      `URL tersebut terdeteksi sebagai ${detectedPlatform}, bukan ${platform}.`
+    );
+  }
+
+  // Validasi domain sumber sebelum meneruskan URL ke extractor.
+  await validatePublicURL(url);
+
+  const methods = MEDIA_EXTRACTORS[platform];
+  const errors = [];
+
+  for (const [methodName, extractor] of methods) {
+    if (typeof extractor !== "function") {
+      continue;
+    }
+
+    try {
+      const raw = await extractor(url);
+      const normalized = normalizeMediaResult(
+        raw,
+        platform,
+        methodName
+      );
+
+      if (normalized) {
+        return normalized;
+      }
+
+      errors.push(`${methodName}: tidak ada media yang ditemukan.`);
+    } catch (error) {
+      errors.push(
+        `${methodName}: ${trimText(error.message || "gagal", 180)}`
+      );
+    }
+  }
+
+  const error = new Error(
+    "Semua extractor gagal mengambil media. Coba URL lain atau ulangi beberapa saat lagi."
+  );
+
+  error.details = errors;
+  throw error;
+}
+
+app.post("/api/extract", async (req, res) => {
+  try {
+    const url = String(req.body?.url || "").trim();
+    const platform = String(req.body?.platform || "").trim();
+
+    const result = await extractMedia(url, platform || undefined);
+
+    res.json(result);
+  } catch (error) {
+    res.status(422).json({
+      ok: false,
+      error: error.message || "Gagal mengekstrak media.",
+      details: Array.isArray(error.details) ? error.details : undefined
+    });
+  }
+});
+
+/* Alias endpoint untuk integrasi frontend */
+app.post("/api/media", async (req, res) => {
+  try {
+    const result = await extractMedia(
+      req.body?.url,
+      req.body?.platform
+    );
+
+    res.json(result);
+  } catch (error) {
+    res.status(422).json({
+      ok: false,
+      error: error.message || "Gagal mengekstrak media."
+    });
+  }
+});
+
 /* Health */
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
     service: "Aspirant",
-    version: "1.0.0",
+    version: "1.1.0",
     uptime: Math.round(process.uptime())
   });
 });
@@ -235,8 +479,8 @@ app.get("/api/health", (req, res) => {
 /* Ping */
 app.get("/api/ping", (req, res) => {
   const start = process.hrtime.bigint();
-
-  const latency = Number(process.hrtime.bigint() - start) / 1e6;
+  const latency =
+    Number(process.hrtime.bigint() - start) / 1e6;
 
   res.json({
     ok: true,
@@ -262,18 +506,27 @@ app.post("/api/scrape", async (req, res) => {
 
     if (!response.ok) {
       await response.body?.cancel().catch(() => {});
-      return jsonError(res, 502, `Website merespons HTTP ${response.status}.`);
+      return jsonError(
+        res,
+        502,
+        `Website merespons HTTP ${response.status}.`
+      );
     }
 
-    const contentType = response.headers.get("content-type") || "";
+    const contentType =
+      response.headers.get("content-type") || "";
 
-    if (!contentType.toLowerCase().includes("text/html") &&
-        !contentType.toLowerCase().includes("application/xhtml+xml")) {
+    if (
+      !contentType.toLowerCase().includes("text/html") &&
+      !contentType.toLowerCase().includes("application/xhtml+xml")
+    ) {
       await response.body?.cancel().catch(() => {});
       return jsonError(res, 415, "URL tersebut bukan halaman HTML.");
     }
 
-    const declaredSize = Number(response.headers.get("content-length") || 0);
+    const declaredSize = Number(
+      response.headers.get("content-length") || 0
+    );
 
     if (declaredSize > MAX_RESPONSE_SIZE) {
       await response.body?.cancel().catch(() => {});
@@ -288,7 +541,12 @@ app.post("/api/scrape", async (req, res) => {
         size += chunk.length;
 
         if (size > MAX_RESPONSE_SIZE) {
-          return jsonError(res, 413, "Ukuran halaman melebihi batas 2 MB.");
+          await response.body?.cancel().catch(() => {});
+          return jsonError(
+            res,
+            413,
+            "Ukuran halaman melebihi batas 2 MB."
+          );
         }
 
         chunks.push(Buffer.from(chunk));
@@ -338,7 +596,7 @@ app.post("/api/scrape", async (req, res) => {
           url: linkURL.href
         });
       } catch {
-        // Abaikan URL yang tidak valid.
+        // Abaikan URL tidak valid.
       }
     });
 
@@ -364,7 +622,7 @@ app.post("/api/scrape", async (req, res) => {
           url: imageURL.href
         });
       } catch {
-        // Abaikan URL gambar yang tidak valid.
+        // Abaikan URL gambar tidak valid.
       }
     });
 
@@ -400,11 +658,17 @@ app.get("/api/history", (req, res) => {
 
 app.delete("/api/history", (req, res) => {
   history.length = 0;
-  res.json({ ok: true, message: "History cleared." });
+
+  res.json({
+    ok: true,
+    message: "History cleared."
+  });
 });
 
 app.delete("/api/history/:id", (req, res) => {
-  const index = history.findIndex(item => item.id === req.params.id);
+  const index = history.findIndex(
+    item => item.id === req.params.id
+  );
 
   if (index === -1) {
     return jsonError(res, 404, "History tidak ditemukan.");
@@ -420,9 +684,18 @@ app.post("/api/request", async (req, res) => {
 
   try {
     const input = String(req.body?.url || "").trim();
-    const method = String(req.body?.method || "GET").toUpperCase();
+    const method = String(
+      req.body?.method || "GET"
+    ).toUpperCase();
 
-    const allowedMethods = ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"];
+    const allowedMethods = [
+      "GET",
+      "HEAD",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE"
+    ];
 
     if (!allowedMethods.includes(method)) {
       return jsonError(res, 400, "HTTP method tidak didukung.");
@@ -432,10 +705,18 @@ app.post("/api/request", async (req, res) => {
       return jsonError(res, 400, "URL wajib diisi.");
     }
 
-    let headers = req.body?.headers || {};
+    const headers = req.body?.headers || {};
 
-    if (!headers || typeof headers !== "object" || Array.isArray(headers)) {
-      return jsonError(res, 400, "Headers harus berupa objek JSON.");
+    if (
+      !headers ||
+      typeof headers !== "object" ||
+      Array.isArray(headers)
+    ) {
+      return jsonError(
+        res,
+        400,
+        "Headers harus berupa objek JSON."
+      );
     }
 
     const filteredHeaders = {};
@@ -453,13 +734,22 @@ app.post("/api/request", async (req, res) => {
       req.body?.contentType || "application/json"
     );
 
-    if (!["application/json", "text/plain"].includes(contentType)) {
-      return jsonError(res, 400, "Content type tidak didukung.");
+    if (
+      !["application/json", "text/plain"].includes(contentType)
+    ) {
+      return jsonError(
+        res,
+        400,
+        "Content type tidak didukung."
+      );
     }
 
     let body;
 
-    if (!["GET", "HEAD"].includes(method) && req.body?.body !== undefined) {
+    if (
+      !["GET", "HEAD"].includes(method) &&
+      req.body?.body !== undefined
+    ) {
       body = String(req.body.body);
       filteredHeaders["Content-Type"] ||= contentType;
     }
@@ -472,18 +762,21 @@ app.post("/api/request", async (req, res) => {
 
     const chunks = [];
     let total = 0;
+    let truncated = false;
 
     if (response.body) {
       for await (const chunk of response.body) {
         const buffer = Buffer.from(chunk);
+        const remaining = MAX_RESPONSE_SIZE - total;
 
-        if (total + buffer.length > MAX_RESPONSE_SIZE) {
-          const remaining = MAX_RESPONSE_SIZE - total;
-
+        if (buffer.length > remaining) {
           if (remaining > 0) {
             chunks.push(buffer.subarray(0, remaining));
+            total += remaining;
           }
 
+          truncated = true;
+          await response.body?.cancel().catch(() => {});
           break;
         }
 
@@ -504,7 +797,7 @@ app.post("/api/request", async (req, res) => {
       duration: Date.now() - started,
       headers: responseHeaders,
       body: Buffer.concat(chunks).toString("utf8"),
-      truncated: total >= MAX_RESPONSE_SIZE
+      truncated
     });
   } catch (error) {
     jsonError(res, 400, error.message || "Request API gagal.");
@@ -519,10 +812,16 @@ app.get("/api/download", async (req, res) => {
     const input = String(req.query.url || "").trim();
 
     if (!input) {
-      return jsonError(res, 400, "Parameter URL wajib diisi.");
+      return jsonError(
+        res,
+        400,
+        "Parameter URL wajib diisi."
+      );
     }
 
-    const requestedName = String(req.query.name || "").slice(0, 200);
+    const requestedName = String(
+      req.query.name || ""
+    ).slice(0, 200);
 
     const result = await fetchPublic(input, {
       headers: {
@@ -536,7 +835,11 @@ app.get("/api/download", async (req, res) => {
 
     if (!upstream.ok) {
       await upstream.body?.cancel().catch(() => {});
-      return jsonError(res, 502, `Sumber merespons HTTP ${upstream.status}.`);
+      return jsonError(
+        res,
+        502,
+        `Sumber merespons HTTP ${upstream.status}.`
+      );
     }
 
     const contentType = (
@@ -549,6 +852,7 @@ app.get("/api/download", async (req, res) => {
       contentType.includes("application/xhtml+xml")
     ) {
       await upstream.body?.cancel().catch(() => {});
+
       return jsonError(
         res,
         415,
@@ -562,7 +866,12 @@ app.get("/api/download", async (req, res) => {
 
     if (contentLength > MAX_DOWNLOAD_SIZE) {
       await upstream.body?.cancel().catch(() => {});
-      return jsonError(res, 413, "Ukuran file melebihi batas 100 MB.");
+
+      return jsonError(
+        res,
+        413,
+        "Ukuran file melebihi batas 100 MB."
+      );
     }
 
     let filename = safeFilename(requestedName);
@@ -570,7 +879,8 @@ app.get("/api/download", async (req, res) => {
     if (!requestedName || filename === "download") {
       try {
         filename = safeFilename(
-          decodeURIComponent(path.basename(result.url.pathname)) || "download"
+          decodeURIComponent(path.basename(result.url.pathname)) ||
+          "download"
         );
       } catch {
         filename = "download";
@@ -579,7 +889,10 @@ app.get("/api/download", async (req, res) => {
 
     res.status(200);
     res.setHeader("Content-Type", contentType);
-    res.setHeader("Content-Disposition", encodeDispositionFilename(filename));
+    res.setHeader(
+      "Content-Disposition",
+      encodeDispositionFilename(filename)
+    );
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("Cache-Control", "no-store");
 
@@ -617,7 +930,11 @@ app.get("/api/download", async (req, res) => {
     }
 
     if (!res.headersSent) {
-      jsonError(res, 502, error.message || "Download gagal.");
+      jsonError(
+        res,
+        502,
+        error.message || "Download gagal."
+      );
     } else {
       res.destroy(error);
     }
@@ -634,6 +951,7 @@ app.get(/.*/, (req, res) => {
   res.sendFile(path.join(PUBLIC, "index.html"));
 });
 
+/* Global error handler */
 app.use((error, req, res, next) => {
   if (res.headersSent) return next(error);
 
@@ -642,14 +960,17 @@ app.use((error, req, res, next) => {
   }
 
   console.error("[Aspirant]", error.message);
+
   jsonError(res, 500, "Terjadi kesalahan internal.");
 });
 
+/* Start server */
 app.listen(PORT, "0.0.0.0", () => {
   console.log("==================================");
   console.log(" Aspirant Utility Workspace");
   console.log("==================================");
   console.log(` Local: http://127.0.0.1:${PORT}`);
+  console.log(" Media Extractor: TikTok / Instagram / Pinterest");
   console.log(" Status: running");
   console.log("==================================");
 });
